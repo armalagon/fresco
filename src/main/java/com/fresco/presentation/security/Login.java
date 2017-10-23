@@ -39,7 +39,7 @@ public class Login implements Serializable {
     }
 
     @Produces
-
+    @LoggedIn
     public User getLoggedInUser() {
         return user;
     }

@@ -5,21 +5,31 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Fresco v1.0 - Home</title>
+        <h:outputStylesheet library="css" name="index.css" />
     </h:head>
     <h:body>
         <h:form>
-            <h:panelGrid columns="2" rendered="#{!login.loggedIn}">
-                <f:validateBean>
-                    <h:outputLabel for="username">Username:</h:outputLabel>
-                    <h:inputText id="username" value="#{credentials.username}"/>
-                    <h:outputLabel for="password">Password:</h:outputLabel>
-                    <h:inputSecret id="password" value="#{credentials.password}"/>
-                </f:validateBean>
-            </h:panelGrid>
-            <h:commandButton value="Login" action="#{login.login}" rendered="#{!login.loggedIn}"/>
-            <h:commandButton value="Logout" action="#{login.logout}" rendered="#{login.loggedIn}"/>
+            <div class="login">
+                <div class="login-screen">
+                    <div class="app-title">
+                        <h1>Fresco</h1>
+                    </div>
+
+                    <div class="login-form">
+                        <div class="control-group">
+                            <h:inputText id="username" styleClass="login-field" value="#{credentials.username}" rendered="#{!login.loggedIn}"/>
+                        </div>
+
+                        <div class="control-group">
+                            <h:inputSecret id="password" styleClass="login-field" value="#{credentials.password}" rendered="#{!login.loggedIn}"/>
+                        </div>
+
+                        <h:commandButton styleClass="btn btn-primary btn-large btn-block" value="Login" action="#{login.login}" rendered="#{!login.loggedIn}"/>
+                        <h:commandButton styleClass="btn btn-primary btn-large btn-block" value="Logout" action="#{login.logout}" rendered="#{login.loggedIn}"/>
+                        <a class="login-link" href="#">Lost your password?</a>
+                    </div>
+                </div>
+            </div>
         </h:form>
-        <br />
-        <h:link outcome="welcomePrimefaces" value="Primefaces welcome page" />
     </h:body>
 </html>
