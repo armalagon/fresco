@@ -8,12 +8,19 @@
     <packaging>war</packaging>
 
     <properties>
+        <!-- Base project configuration -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
-        <primefaces.version>5.3</primefaces.version>
+        <!-- Custom project configuration -->
+        <application.mode>Development</application.mode>
+
+        <!-- Third party dependencies -->
+        <primefaces.version>6.2</primefaces.version>
+
+        <!-- Third party plugins -->
     </properties>
 
     <dependencies>
