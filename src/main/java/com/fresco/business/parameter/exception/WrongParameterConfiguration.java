@@ -1,7 +1,6 @@
 package com.fresco.business.parameter.exception;
 
 import com.fresco.business.general.exception.BusinessException;
-import com.fresco.business.i18n.CustomBundleKey;
 
 /**
  *
@@ -12,12 +11,12 @@ import com.fresco.business.i18n.CustomBundleKey;
  */
 public class WrongParameterConfiguration extends BusinessException {
 
-    public WrongParameterConfiguration(String key) {
-        this(key, (Object[]) null);
+    public WrongParameterConfiguration(String errorCode) {
+        this(errorCode, (Object[]) null);
     }
 
-    public WrongParameterConfiguration(String key, Object... values) {
-        super(CustomBundleKey.create(key, WrongParameterConfiguration.class), values);
+    public WrongParameterConfiguration(String errorCode, Object... arguments) {
+        super(errorCode, arguments);
     }
 
 }

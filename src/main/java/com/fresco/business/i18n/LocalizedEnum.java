@@ -1,5 +1,7 @@
 package com.fresco.business.i18n;
 
+import static com.fresco.business.i18n.LocalizedConstants.DOT;
+
 /**
  *
  * @author Armando Alaniz
@@ -13,8 +15,10 @@ public interface LocalizedEnum extends Localized {
             throw new UnsupportedOperationException("The class [" + this.getClass().getSimpleName() + "] must be an Enum type to be able to retrieve the description");
         }
 
-        String key = ((Enum) this).name();
-        return getMessage(key);
+        StringBuilder key = new StringBuilder(this.getClass().getName());
+        key.append(DOT);
+        key.append(((Enum) this).name());
+        return getMessage(key.toString());
     }
 
 }

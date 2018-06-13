@@ -1,8 +1,10 @@
 package com.fresco.business.general.exception;
 
 import com.fresco.business.i18n.BundleIdentifier;
-import com.fresco.business.i18n.CustomBundleKey;
-import com.fresco.business.i18n.LocalizedMessage;
+import com.fresco.business.i18n.BundleKeyGenerator;
+import static com.fresco.business.i18n.LocalizedConstants.EMPTY_BRACKETS;
+import static com.fresco.business.i18n.LocalizedConstants.PREFIX_TO_EXPAND_PARAMETER_KEY;
+import com.fresco.business.i18n.LocalizedMessageResolver;
 
 /**
  *
@@ -12,9 +14,8 @@ import com.fresco.business.i18n.LocalizedMessage;
  */
 public class BusinessException extends Exception implements BundleIdentifier {
 
-    protected CustomBundleKey key;
+    protected String errorCode;
     protected Object[] arguments;
-    protected LocalizedMessage im;
 
     public BusinessException() {
     }
@@ -31,31 +32,53 @@ public class BusinessException extends Exception implements BundleIdentifier {
         super(cause);
     }
 
-    public BusinessException(CustomBundleKey key) {
-        this(key, (Object[]) null);
+    public BusinessException(String errorCode, Object... arguments) {
+        this(errorCode, true, arguments);
     }
 
-    public BusinessException(CustomBundleKey key, Object... values) {
-        this.key = key;
-        this.arguments = values;
-        this.im = LocalizedMessage.create(getDefaultBaseBundleName(), this.key.getFullyQualifiedKeyName(), this.arguments);
+    public BusinessException(String errorCode, boolean expandKeyBasedOnCurrentClass, Object... arguments) {
+        this.errorCode = expandKeyBasedOnCurrentClass ? BundleKeyGenerator.expandKeyUsing(errorCode, this.getClass()) : errorCode;
+        this.arguments = doTransform(arguments);
     }
 
     public String getErrorCode() {
-        return key != null ? key.getFullyQualifiedKeyName() : null;
+        return errorCode;
     }
 
-    public Object[] getDefaultArguments() {
+    public Object[] getArguments() {
         return arguments;
     }
 
     @Override
     public String getMessage() {
-        if (key != null) {
-            return im.getMessage();
+        if (errorCode != null) {
+            return LocalizedMessageResolver.translate(getDefaultBaseBundleName(), errorCode, arguments);
         } else {
             return super.getMessage();
         }
+    }
+
+    protected Object[] doTransform(Object[] arguments) {
+        if (arguments == null || arguments.length == 0) {
+            return arguments;
+        }
+
+        Object[] argsTransformed = new Object[arguments.length];
+        for (int i = 0; i < arguments.length; i++) {
+            Object arg = arguments[i];
+            if (arg instanceof String) {
+                String value = (String) arg;
+                if (LocalizedMessageResolver.isReservedArgument(value) && value.startsWith(PREFIX_TO_EXPAND_PARAMETER_KEY, 1)) {
+                    argsTransformed[i] = value.replace(EMPTY_BRACKETS, this.getClass().getName());
+                } else {
+                    argsTransformed[i] = arg;
+                }
+            } else {
+                argsTransformed[i] = arg;
+            }
+        }
+
+        return argsTransformed;
     }
 
 }
