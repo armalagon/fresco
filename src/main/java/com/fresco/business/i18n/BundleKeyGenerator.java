@@ -1,8 +1,6 @@
 package com.fresco.business.i18n;
 
-import static com.fresco.business.i18n.LocalizedConstants.DOT;
-import static com.fresco.business.i18n.LocalizedConstants.LEFT_BRACE;
-import static com.fresco.business.i18n.LocalizedConstants.RIGHT_BRACE;
+import static com.fresco.business.i18n.LocalizedConstants.*;
 
 /**
  *
@@ -13,6 +11,10 @@ import static com.fresco.business.i18n.LocalizedConstants.RIGHT_BRACE;
 public abstract class BundleKeyGenerator {
 
     public static String expandKeyUsing(final String key, final Class<?> clazz) {
+        if (key.startsWith(clazz.getName())) {
+            return key;
+        }
+
         final StringBuilder fqkn = new StringBuilder(clazz.getName());
         fqkn.append(DOT);
         fqkn.append(key);
@@ -26,6 +28,10 @@ public abstract class BundleKeyGenerator {
         rkn.append(fqkn);
         rkn.append(RIGHT_BRACE);
         return rkn.toString();
+    }
+
+    public static String expandReservedParameterUsing(final String key, final Class<?> clazz) {
+        return key.replace(EMPTY_BRACKETS, clazz.getName());
     }
 
 }

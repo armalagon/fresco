@@ -1,6 +1,7 @@
 package com.fresco.business.i18n;
 
 import static com.fresco.business.i18n.LocalizedConstants.LEFT_BRACE_STR;
+import static com.fresco.business.i18n.LocalizedConstants.PREFIX_TO_EXPAND_PARAMETER_KEY;
 import static com.fresco.business.i18n.LocalizedConstants.RIGHT_BRACE_STR;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -15,6 +16,10 @@ public abstract class LocalizedMessageResolver {
 
     public static boolean isReservedArgument(String argument) {
         return argument.startsWith(LEFT_BRACE_STR) && argument.endsWith(RIGHT_BRACE_STR);
+    }
+
+    public static boolean isReservedArgumentForAutoExpansion(String argument) {
+        return isReservedArgument(argument) && argument.startsWith(PREFIX_TO_EXPAND_PARAMETER_KEY, 1);
     }
 
     public static String translate(String bundleName, String key) {

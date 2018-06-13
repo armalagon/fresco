@@ -2,8 +2,6 @@ package com.fresco.business.general.exception;
 
 import com.fresco.business.i18n.BundleIdentifier;
 import com.fresco.business.i18n.BundleKeyGenerator;
-import static com.fresco.business.i18n.LocalizedConstants.EMPTY_BRACKETS;
-import static com.fresco.business.i18n.LocalizedConstants.PREFIX_TO_EXPAND_PARAMETER_KEY;
 import com.fresco.business.i18n.LocalizedMessageResolver;
 
 /**
@@ -14,22 +12,30 @@ import com.fresco.business.i18n.LocalizedMessageResolver;
  */
 public class BusinessException extends Exception implements BundleIdentifier {
 
-    protected String errorCode;
-    protected Object[] arguments;
+    protected final String errorCode;
+    protected final Object[] arguments;
 
     public BusinessException() {
+        this.errorCode = null;
+        this.arguments = null;
     }
 
     public BusinessException(String message) {
         super(message);
+        this.errorCode = null;
+        this.arguments = null;
     }
 
     public BusinessException(String message, Throwable cause) {
         super(message, cause);
+        this.errorCode = null;
+        this.arguments = null;
     }
 
     public BusinessException(Throwable cause) {
         super(cause);
+        this.errorCode = null;
+        this.arguments = null;
     }
 
     public BusinessException(String errorCode, Object... arguments) {
@@ -68,8 +74,8 @@ public class BusinessException extends Exception implements BundleIdentifier {
             Object arg = arguments[i];
             if (arg instanceof String) {
                 String value = (String) arg;
-                if (LocalizedMessageResolver.isReservedArgument(value) && value.startsWith(PREFIX_TO_EXPAND_PARAMETER_KEY, 1)) {
-                    argsTransformed[i] = value.replace(EMPTY_BRACKETS, this.getClass().getName());
+                if (LocalizedMessageResolver.isReservedArgumentForAutoExpansion(value)) {
+                    argsTransformed[i] = BundleKeyGenerator.expandReservedParameterUsing(value, this.getClass());
                 } else {
                     argsTransformed[i] = arg;
                 }
