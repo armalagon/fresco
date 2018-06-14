@@ -12,7 +12,7 @@ public interface LocalizedEnum extends Localized {
 
     default String getMessage() {
         if (!(this instanceof Enum)) {
-            throw new UnsupportedOperationException("The class [" + this.getClass().getSimpleName() + "] must be an Enum type to be able to retrieve the description");
+            throw new UnsupportedOperationException("The class [" + this.getClass().getName() + "] must be an Enum type to be able to retrieve the description");
         }
 
         StringBuilder key = new StringBuilder(this.getClass().getName());
