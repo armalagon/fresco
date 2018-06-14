@@ -26,6 +26,7 @@
         <flyway.url>jdbc:postgresql://localhost:5432/fresco?ApplicationName=flyway-maven-plugin</flyway.url>
         <flyway.user>fresco</flyway.user>
         <flyway.password>fresco</flyway.password>
+        <flyway.schemas>public,security</flyway.schemas>
     </properties>
 
     <dependencies>
