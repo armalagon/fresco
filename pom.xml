@@ -16,30 +16,43 @@
 
         <!-- Custom project configuration -->
         <application.mode>Development</application.mode>
+        <jdbc.url>jdbc:postgresql://localhost:5432/fresco</jdbc.url>
+        <jdbc.user>fresco</jdbc.user>
+        <jdbc.password>fresco</jdbc.password>
 
         <!-- Third party dependencies -->
         <primefaces.version>6.2</primefaces.version>
+        <jooq.version>3.11.0</jooq.version>
         <postgresql.version>42.2.2</postgresql.version>
 
         <!-- Third party plugins -->
         <flyway.version>5.1.1</flyway.version>
-        <flyway.url>jdbc:postgresql://localhost:5432/fresco?ApplicationName=flyway-maven-plugin</flyway.url>
-        <flyway.user>fresco</flyway.user>
-        <flyway.password>fresco</flyway.password>
+        <flyway.url>${jdbc.url}?ApplicationName=flyway-maven-plugin</flyway.url>
+        <flyway.user>${jdbc.user}</flyway.user>
+        <flyway.password>${jdbc.password}</flyway.password>
+        <!-- For flyway:clean goal to work properly -->
         <flyway.schemas>public,security</flyway.schemas>
+        <jooq.plugin.version>3.11.0</jooq.plugin.version>
+        <jooq.db.generator>org.jooq.meta.postgres.PostgresDatabase</jooq.db.generator>
+        <jooq.generated.sources>com.fresco.business.jooq</jooq.generated.sources>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>${primefaces.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}</version>
         </dependency>
     </dependencies>
 
@@ -61,12 +74,59 @@
                 <executions>
                     <execution>
                         <id>database-migration</id>
-                        <phase>initialize</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>migrate</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooq.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>jooq-codegen</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${postgresql.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <jdbc>
+                        <url>${jdbc.url}?ApplicationName=jooq-codegen-maven</url>
+                        <user>${jdbc.user}</user>
+                        <password>${jdbc.password}</password>
+                    </jdbc>
+                    <generator>
+                        <database>
+                            <name>${jooq.db.generator}</name>
+                            <includes>.*</includes>
+                            <excludes>flyway_schema_.*</excludes>
+                            <schemaVersionProvider>SELECT :schema_name || '_' || MAX(version) FROM flyway_schema_history</schemaVersionProvider>
+                            <schemata>
+                                <schema>
+                                    <inputSchema>public</inputSchema>
+                                </schema>
+                                <schema>
+                                    <inputSchema>security</inputSchema>
+                                </schema>
+                            </schemata>
+                        </database>
+                        <target>
+                            <packageName>${jooq.generated.sources}</packageName>
+                        </target>
+                    </generator>
+                </configuration>
             </plugin>
         </plugins>
     </build>
