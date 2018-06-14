@@ -18,4 +18,8 @@ public class WrongParameterConfiguration extends BusinessException {
         super(errorCode, arguments);
     }
 
+    public WrongParameterConfiguration(String errorCode, boolean expandKeyBasedOnCurrentClass, Object... arguments) {
+        super(errorCode, expandKeyBasedOnCurrentClass, arguments);
+    }
+
 }

@@ -64,6 +64,17 @@ public class BusinessException extends Exception implements BundleIdentifier {
         }
     }
 
+    public String getCategory() {
+        String category = null;
+        // Swallow any error
+        try {
+            category = LocalizedMessageResolver.translate(getDefaultBaseBundleName(), this.getClass().getName());
+        } catch (RuntimeException re) {
+            // TODO At least log the error
+        }
+        return category;
+    }
+
     protected Object[] doTransform(Object[] arguments) {
         if (arguments == null || arguments.length == 0) {
             return arguments;
