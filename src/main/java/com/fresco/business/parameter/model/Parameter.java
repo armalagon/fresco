@@ -5,7 +5,6 @@ import com.fresco.business.general.model.NaturalIdentifier;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
 
 /**
  *
@@ -20,13 +19,9 @@ public interface Parameter extends NaturalIdentifier<String> {
     String ERROR_FOR_DATA_TYPE_MISMATCH = "dataTypeMismatch";
     String ERROR_FOR_NO_CONFIGURATION_REQUIRED = "noConfigurationRequired";
 
-    String KEY_FOR_DATE_DATATYPE = "{com.fresco.business.parameter.exception.WrongConstraintConfiguration.dataType.date}";
-    String KEY_FOR_TOTAL_DATATYPE = "{com.fresco.business.parameter.exception.WrongConstraintConfiguration.dataType.total}";
-    String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{com.fresco.business.parameter.exception.WrongConstraintConfiguration.dataType.amountOrTotal}";
-
-    public enum ValueSourceType {
-        SIMPLE_VALUE, ENUM, ENTITY, QUERY
-    }
+    String KEY_FOR_DATE_DATATYPE = "{[].dataType.date}";
+    String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
+    String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
 
     /**
      * <p>Remarks: It's optional. The value could be inferred from the type returned by the getValue method</p>
@@ -47,8 +42,6 @@ public interface Parameter extends NaturalIdentifier<String> {
 
     BusinessProcess getProcess();
 
-    Set<ParameterValueSource> getValueSources();
-
     Long getMinAmount();
 
     Long getMaxAmount();
@@ -62,16 +55,16 @@ public interface Parameter extends NaturalIdentifier<String> {
     BigDecimal getMaxTotalAmount();
 
     default void validateConstraintConfiguration() throws WrongParameterConfiguration {
-        if (getMinAmount() != null && getMaxAmount() != null && getMinDate() != null && getMaxDate() != null && getMinTotalAmount() != null
-                && getMaxTotalAmount() != null) {
-            throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, getCode());
-        }
-
         final boolean atLeastOneConstraintIsConfigured = getMinAmount() != null || getMaxAmount() != null || getMinDate() != null ||
                 getMaxDate() != null || getMinTotalAmount() != null || getMaxTotalAmount() != null;
 
         if (!ValueSourceType.SIMPLE_VALUE.equals(getValueSourceType()) && atLeastOneConstraintIsConfigured) {
             throw new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, getCode());
+        }
+
+        if (getMinAmount() != null && getMaxAmount() != null && getMinDate() != null && getMaxDate() != null && getMinTotalAmount() != null
+                && getMaxTotalAmount() != null) {
+            throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, getCode());
         }
 
         Object value = getValue();
