@@ -19,8 +19,13 @@
 
         <!-- Third party dependencies -->
         <primefaces.version>6.2</primefaces.version>
+        <postgresql.version>42.2.2</postgresql.version>
 
         <!-- Third party plugins -->
+        <flyway.version>5.1.1</flyway.version>
+        <flyway.url>jdbc:postgresql://localhost:5432/fresco?ApplicationName=flyway-maven-plugin</flyway.url>
+        <flyway.user>fresco</flyway.user>
+        <flyway.password>fresco</flyway.password>
     </properties>
 
     <dependencies>
@@ -39,5 +44,29 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${postgresql.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>database-migration</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
