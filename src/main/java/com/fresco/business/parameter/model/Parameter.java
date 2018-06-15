@@ -1,6 +1,7 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcess;
+import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -11,6 +12,15 @@ import java.time.LocalDate;
  * @since 1.0
  */
 public class Parameter {
+
+    private static final String ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED = "allConstraintsWereConfigured";
+    private static final String ERROR_FOR_NO_CONSTRAINTS_ALLOWED = "noConstraintsAllowed";
+    private static final String ERROR_FOR_DATA_TYPE_MISMATCH = "dataTypeMismatch";
+    private static final String ERROR_FOR_NO_CONFIGURATION_REQUIRED = "noConfigurationRequired";
+
+    private static final String KEY_FOR_DATE_DATATYPE = "{[].dataType.date}";
+    private static final String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
+    private static final String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
 
     private final Integer id;
     private final String code;
@@ -94,6 +104,63 @@ public class Parameter {
 
     public BigDecimal getMaxTotal() {
         return maxTotal;
+    }
+
+    public boolean atLeastOneConstraintIsConfigured() {
+        return !(minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null);
+    }
+
+    public boolean allConstraintsAreConfigured() {
+        return minAmount != null && maxAmount != null && minDate != null && maxDate != null && minTotal != null && maxTotal != null;
+    }
+
+    public boolean dateIsConfigured() {
+        return !(minDate == null && maxDate == null);
+    }
+
+    public boolean totalIsConfigured() {
+        return !(minTotal == null && maxTotal == null);
+    }
+
+    public boolean atLeastOneNumericConstraintIsConfigured() {
+        return !(minAmount == null && maxAmount == null && minTotal == null && maxTotal == null);
+    }
+
+    public boolean isIntegerType() {
+        return value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long;
+    }
+
+    public void validateConstraintConfig() throws WrongParameterConfiguration {
+        if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
+            throw new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, code);
+        }
+
+        if (allConstraintsAreConfigured()) {
+            throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, code);
+        }
+
+        if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
+            if (value instanceof Number) {
+                if (dateIsConfigured()) {
+                    throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_DATE_DATATYPE,
+                            value.getClass().getSimpleName(), code);
+                }
+
+                if (isIntegerType() && totalIsConfigured()) {
+                    throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_TOTAL_DATATYPE,
+                            value.getClass().getSimpleName(), code);
+                }
+            } else if (value instanceof LocalDate) {
+                if (atLeastOneNumericConstraintIsConfigured()) {
+                    throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE,
+                            value.getClass().getSimpleName(), code);
+                }
+            } else {
+                // Boolean, String, etc...
+                throw new WrongParameterConfiguration(ERROR_FOR_NO_CONFIGURATION_REQUIRED, code,
+                        value.getClass().getSimpleName());
+            }
+        }
     }
 
     @Override
