@@ -61,6 +61,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.zacate</groupId>
+            <artifactId>zacate</artifactId>
+            <version>${zacate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jooq-meta</artifactId>
+                    <groupId>org.jooq</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jooq-codegen</artifactId>
+                    <groupId>org.jooq</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,7 +1,7 @@
 package com.fresco.business.security.model;
 
 import com.fresco.business.general.model.BusinessProcess;
-import com.fresco.business.i18n.LocalizedEnum;
+import com.zacate.i18n.LocalizedEnum;
 
 /**
  *

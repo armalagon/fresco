@@ -1,5 +1,7 @@
 package com.fresco.business.general.model;
 
+import com.zacate.identifier.NaturalIdentifier;
+
 /**
  *
  * @author Armando Alaniz

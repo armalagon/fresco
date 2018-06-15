@@ -1,6 +1,6 @@
 package com.fresco.business.parameter.exception;
 
-import com.fresco.business.general.exception.BusinessException;
+import com.zacate.exception.BusinessException;
 
 /**
  *

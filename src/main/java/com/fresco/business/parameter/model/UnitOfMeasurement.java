@@ -1,7 +1,7 @@
 package com.fresco.business.parameter.model;
 
-import com.fresco.business.general.model.NaturalIdentifier;
-import com.fresco.business.i18n.LocalizedEnum;
+import com.zacate.i18n.LocalizedEnum;
+import com.zacate.identifier.NaturalIdentifier;
 
 /**
  *
