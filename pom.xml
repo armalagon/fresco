@@ -26,6 +26,8 @@
         <postgresql.version>42.2.2</postgresql.version>
         <zacate.version>1.0-SNAPSHOT</zacate.version>
 
+        <junit.version>4.12</junit.version>
+
         <!-- Third party plugins -->
         <flyway.version>5.1.1</flyway.version>
         <flyway.url>${jdbc.url}?ApplicationName=flyway-maven-plugin</flyway.url>
@@ -75,6 +77,19 @@
                     <groupId>org.jooq</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -135,9 +150,6 @@
                         <password>${jdbc.password}</password>
                     </jdbc>
                     <generator>
-                        <strategy>
-                            <name>com.zacate.jooq.TableSuffixStrategy</name>
-                        </strategy>
                         <database>
                             <name>${jooq.db.generator}</name>
                             <includes>.*</includes>

@@ -1,6 +1,7 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcess;
+import com.fresco.business.general.model.ReadOnlyIdentifier;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter {
+public class Parameter extends ReadOnlyIdentifier<Integer> {
 
     private static final String ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED = "allConstraintsWereConfigured";
     private static final String ERROR_FOR_NO_CONSTRAINTS_ALLOWED = "noConstraintsAllowed";
@@ -22,7 +23,6 @@ public class Parameter {
     private static final String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
     private static final String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
 
-    private final Integer id;
     private final String code;
     private final String dataType;
     private final Object value;
@@ -39,7 +39,7 @@ public class Parameter {
     public Parameter(Integer id, String code, String dataType, Object value, ValueSourceType valueSourceType,
             UnitOfMeasurement unitOfMeasurement, BusinessProcess process, Long minAmount, Long maxAmount, LocalDate minDate,
             LocalDate maxDate, BigDecimal minTotal, BigDecimal maxTotal) {
-        this.id = id;
+        super(id);
         this.code = code;
         this.dataType = dataType;
         this.value = value;
@@ -52,10 +52,6 @@ public class Parameter {
         this.maxDate = maxDate;
         this.minTotal = minTotal;
         this.maxTotal = maxTotal;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public String getCode() {
@@ -114,6 +110,10 @@ public class Parameter {
         return minAmount != null && maxAmount != null && minDate != null && maxDate != null && minTotal != null && maxTotal != null;
     }
 
+    public boolean noConstraintConfigured() {
+        return minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null;
+    }
+
     public boolean dateIsConfigured() {
         return !(minDate == null && maxDate == null);
     }
@@ -126,11 +126,15 @@ public class Parameter {
         return !(minAmount == null && maxAmount == null && minTotal == null && maxTotal == null);
     }
 
-    public boolean isIntegerType() {
+    public boolean valueIsIntegerType() {
         return value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long;
     }
 
     public void validateConstraintConfig() throws WrongParameterConfiguration {
+        if (noConstraintConfigured()) {
+            return;
+        }
+
         if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
             throw new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, code);
         }
@@ -146,7 +150,7 @@ public class Parameter {
                             value.getClass().getSimpleName(), code);
                 }
 
-                if (isIntegerType() && totalIsConfigured()) {
+                if (valueIsIntegerType() && totalIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_TOTAL_DATATYPE,
                             value.getClass().getSimpleName(), code);
                 }
