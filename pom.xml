@@ -150,6 +150,9 @@
                         <password>${jdbc.password}</password>
                     </jdbc>
                     <generator>
+                        <strategy>
+                            <name>com.zacate.jooq.TableSuffixStrategy</name>
+                        </strategy>
                         <database>
                             <name>${jooq.db.generator}</name>
                             <includes>.*</includes>
