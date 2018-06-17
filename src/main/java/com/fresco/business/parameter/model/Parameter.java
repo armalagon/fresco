@@ -1,7 +1,7 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcess;
-import com.fresco.business.general.model.ReadOnlyIdentifier;
+import com.zacate.model.ReadOnlyIdentifier;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,7 +36,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
     private final BigDecimal minTotal;
     private final BigDecimal maxTotal;
 
-    public Parameter(Integer id, String code, String dataType, Object value, ValueSourceType valueSourceType,
+    public Parameter(Integer id, String code, String dataType, String value, ValueSourceType valueSourceType,
             UnitOfMeasurement unitOfMeasurement, BusinessProcess process, Long minAmount, Long maxAmount, LocalDate minDate,
             LocalDate maxDate, BigDecimal minTotal, BigDecimal maxTotal) {
         super(id);
@@ -169,7 +169,8 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
 
     @Override
     public String toString() {
-        return "Parameter{" + "id=" + id + ", code=" + code + ", value=" + value + ", unitOfMeasurement=" + unitOfMeasurement + '}';
+        return "Parameter{" + "id=" + id + ", code=" + code + ", dataType=" + dataType + ", value=" + value + ", valueSourceType=" +
+                valueSourceType + ", unitOfMeasurement=" + unitOfMeasurement + ", process=" + process + '}';
     }
 
 }
