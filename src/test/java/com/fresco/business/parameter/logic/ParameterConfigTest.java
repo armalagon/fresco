@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -22,11 +23,22 @@ public class ParameterConfigTest {
     private static final String JDBC_PASSWORD = "fresco";
 
     @Test
+    public void testParameterProvider() throws SQLException {
+        ParameterProvider parameterProvider = new ParameterProvider();
+
+        try (Connection cnn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            parameterProvider.query = DSL.using(cnn);
+            parameterProvider.findAll().stream()
+                    .forEach(p -> System.out.println(">>>>>>>>>>>>>> " + p));
+        }
+    }
+
+    @Test
+    @Ignore
     public void testParameterConfig() throws SQLException {
         try (Connection cnn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             Result<?> query = DSL.using(cnn)
                     .select(
-                            PARAMETER.ID,
                             PARAMETER.CODE,
                             PARAMETER.DATA_TYPE_ENUM,
                             PARAMETER.UNIT_OF_MEASUREMENT_ENUM,

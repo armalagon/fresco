@@ -1,10 +1,10 @@
 package com.fresco.business.parameter.logic;
 
-import com.fresco.business.general.model.BusinessProcess;
+import com.fresco.business.general.model.BusinessProcessType;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER_CONSTRAINT;
-import static com.fresco.business.jooq.public_.Tables.PROCESS;
 import com.fresco.business.parameter.model.Parameter;
+import com.fresco.business.parameter.model.ParameterType;
 import com.fresco.business.parameter.model.UnitOfMeasurement;
 import com.fresco.business.parameter.model.ValueSourceType;
 import java.util.List;
@@ -26,13 +26,13 @@ public class ParameterProvider {
 
     public List<Parameter> findAll() {
         return query.select(
-                PROCESS.CODE,
                 PARAMETER.ID,
                 PARAMETER.CODE,
                 PARAMETER.DATA_TYPE_ENUM,
                 PARAMETER.VALUE,
                 PARAMETER.VALUE_SOURCE_TYPE_ENUM,
                 PARAMETER.UNIT_OF_MEASUREMENT_ENUM,
+                PARAMETER.BUSINESS_PROCESS_TYPE_ENUM,
                 PARAMETER_CONSTRAINT.MIN_AMOUNT,
                 PARAMETER_CONSTRAINT.MAX_AMOUNT,
                 PARAMETER_CONSTRAINT.MIN_DATE,
@@ -43,14 +43,13 @@ public class ParameterProvider {
             .from(PARAMETER)
             .leftJoin(PARAMETER_CONSTRAINT)
             .on(PARAMETER.ID.eq(PARAMETER_CONSTRAINT.ID))
-            .join(PROCESS)
-            .on(PARAMETER.PROCESS_ID.eq(PROCESS.ID))
             .fetch(record -> {
+                ParameterType parameterType = ParameterType.findByCode(record.get(PARAMETER.CODE));
                 ValueSourceType valueSourceType = ValueSourceType.findByCode(record.get(PARAMETER.VALUE_SOURCE_TYPE_ENUM));
                 UnitOfMeasurement unitOfMeasurement = UnitOfMeasurement.findByCode(record.get(PARAMETER.UNIT_OF_MEASUREMENT_ENUM));
-                BusinessProcess process = null;
+                BusinessProcessType process = BusinessProcessType.findByCode(record.get(PARAMETER.BUSINESS_PROCESS_TYPE_ENUM));
 
-                return new Parameter(record.get(PARAMETER.ID), record.get(PARAMETER.CODE), record.get(PARAMETER.DATA_TYPE_ENUM),
+                return new Parameter(record.get(PARAMETER.ID), parameterType, record.get(PARAMETER.DATA_TYPE_ENUM),
                         record.get(PARAMETER.VALUE), valueSourceType, unitOfMeasurement, process,
                         record.get(PARAMETER_CONSTRAINT.MIN_AMOUNT), record.get(PARAMETER_CONSTRAINT.MAX_AMOUNT), null, null,
                         record.get(PARAMETER_CONSTRAINT.MIN_TOTAL), record.get(PARAMETER_CONSTRAINT.MAX_TOTAL));

@@ -1,20 +1,10 @@
 -- *******************************************************************************
 -- PUBLIC
 -- *******************************************************************************
-drop table if exists process cascade;
 drop table if exists parameter cascade;
 drop table if exists parameter_constraint cascade;
 drop table if exists parameter_source cascade;
 
-
-create table process (
-	id serial not null
-	, code character varying(85) not null
-	, parent_process_id integer
-    , constraint process_pk primary key (id)
-    , constraint process_code_uq unique (code)
-    , constraint process_parent_process_fk foreign key (parent_process_id) references process (id)
-);
 
 create table parameter (
     id serial not null
@@ -23,10 +13,9 @@ create table parameter (
     , value character varying(400)
     , value_source_type_enum character varying(15) not null -- simple value, model (table or enum)
 	, unit_of_measurement_enum character varying(15) not null
-    , process_id integer not null
+    , business_process_type_enum character varying(15) not null
     , constraint parameter_pk primary key (id)
     , constraint parameter_code_uq unique (code)
-    , constraint parameter_process foreign key (process_id) references process (id)
 );
 
 create table parameter_constraint (
@@ -143,4 +132,3 @@ create table user_activity_detail (
 	, constraint user_activity_fk foreign key (user_activity_id) references user_activity (id)
 	, constraint user_activity_detail_parent_fk foreign key (parent_user_activity_detail_id) references user_activity_detail (id)
 );
-

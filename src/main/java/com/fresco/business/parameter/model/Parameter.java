@@ -1,8 +1,9 @@
 package com.fresco.business.parameter.model;
 
-import com.fresco.business.general.model.BusinessProcess;
-import com.zacate.model.ReadOnlyIdentifier;
+import com.fresco.business.general.model.BusinessProcessType;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
+import com.zacate.identifier.NaturalIdentifier;
+import com.zacate.model.ReadOnlyIdentifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter extends ReadOnlyIdentifier<Integer> {
+public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIdentifier<String> {
 
     private static final String ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED = "allConstraintsWereConfigured";
     private static final String ERROR_FOR_NO_CONSTRAINTS_ALLOWED = "noConstraintsAllowed";
@@ -23,12 +24,12 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
     private static final String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
     private static final String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
 
-    private final String code;
+    private final ParameterType parameterType;
     private final String dataType;
     private final Object value;
     private final ValueSourceType valueSourceType;
     private final UnitOfMeasurement unitOfMeasurement;
-    private final BusinessProcess process;
+    private final BusinessProcessType businessProcessType;
     private final Long minAmount;
     private final Long maxAmount;
     private final LocalDate minDate;
@@ -36,16 +37,16 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
     private final BigDecimal minTotal;
     private final BigDecimal maxTotal;
 
-    public Parameter(Integer id, String code, String dataType, String value, ValueSourceType valueSourceType,
-            UnitOfMeasurement unitOfMeasurement, BusinessProcess process, Long minAmount, Long maxAmount, LocalDate minDate,
+    public Parameter(Integer id, ParameterType parameterType, String dataType, String value, ValueSourceType valueSourceType,
+            UnitOfMeasurement unitOfMeasurement, BusinessProcessType businessProcessType, Long minAmount, Long maxAmount, LocalDate minDate,
             LocalDate maxDate, BigDecimal minTotal, BigDecimal maxTotal) {
         super(id);
-        this.code = code;
+        this.parameterType = parameterType;
         this.dataType = dataType;
         this.value = value;
         this.valueSourceType = valueSourceType;
         this.unitOfMeasurement = unitOfMeasurement;
-        this.process = process;
+        this.businessProcessType = businessProcessType;
         this.minAmount = minAmount;
         this.maxAmount = maxAmount;
         this.minDate = minDate;
@@ -54,8 +55,13 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
         this.maxTotal = maxTotal;
     }
 
+    @Override
     public String getCode() {
-        return code;
+        return parameterType.getCode();
+    }
+
+    public ParameterType getParameterType() {
+        return parameterType;
     }
 
     public String getDataType() {
@@ -74,8 +80,8 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
         return unitOfMeasurement;
     }
 
-    public BusinessProcess getProcess() {
-        return process;
+    public BusinessProcessType getBusinessProcessType() {
+        return businessProcessType;
     }
 
     public Long getMinAmount() {
@@ -136,41 +142,41 @@ public class Parameter extends ReadOnlyIdentifier<Integer> {
         }
 
         if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
-            throw new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, code);
+            throw new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, getCode());
         }
 
         if (allConstraintsAreConfigured()) {
-            throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, code);
+            throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, getCode());
         }
 
         if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
             if (value instanceof Number) {
                 if (dateIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_DATE_DATATYPE,
-                            value.getClass().getSimpleName(), code);
+                            value.getClass().getSimpleName(), getCode());
                 }
 
                 if (valueIsIntegerType() && totalIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_TOTAL_DATATYPE,
-                            value.getClass().getSimpleName(), code);
+                            value.getClass().getSimpleName(), getCode());
                 }
             } else if (value instanceof LocalDate) {
                 if (atLeastOneNumericConstraintIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE,
-                            value.getClass().getSimpleName(), code);
+                            value.getClass().getSimpleName(), getCode());
                 }
             } else {
                 // Boolean, String, etc...
-                throw new WrongParameterConfiguration(ERROR_FOR_NO_CONFIGURATION_REQUIRED, code,
-                        value.getClass().getSimpleName());
+                throw new WrongParameterConfiguration(ERROR_FOR_NO_CONFIGURATION_REQUIRED, getCode(), value.getClass().getSimpleName());
             }
         }
     }
 
     @Override
     public String toString() {
-        return "Parameter{" + "id=" + id + ", code=" + code + ", dataType=" + dataType + ", value=" + value + ", valueSourceType=" +
-                valueSourceType + ", unitOfMeasurement=" + unitOfMeasurement + ", process=" + process + '}';
+        return "Parameter{" + "id=" + id + ", code=" + getCode() + ", dataType=" + dataType + ", value=" + value + ", valueSourceType=" +
+                valueSourceType + ", unitOfMeasurement=" + unitOfMeasurement + ", businessProcessType=" + businessProcessType +
+                ", businessProcessCategory=" + businessProcessType.getCategory() + '}';
     }
 
 }
