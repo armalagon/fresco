@@ -7,7 +7,6 @@ import static com.fresco.business.jooq.public_.Tables.PROCESS;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.business.parameter.model.UnitOfMeasurement;
 import com.fresco.business.parameter.model.ValueSourceType;
-import com.zacate.identifier.EnumLookup;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -47,8 +46,8 @@ public class ParameterProvider {
             .join(PROCESS)
             .on(PARAMETER.PROCESS_ID.eq(PROCESS.ID))
             .fetch(record -> {
-                ValueSourceType valueSourceType = EnumLookup.findByCode(ValueSourceType.class, record.get(PARAMETER.VALUE_SOURCE_TYPE_ENUM));
-                UnitOfMeasurement unitOfMeasurement = EnumLookup.findByCode(UnitOfMeasurement.class, record.get(PARAMETER.UNIT_OF_MEASUREMENT_ENUM));
+                ValueSourceType valueSourceType = ValueSourceType.findByCode(record.get(PARAMETER.VALUE_SOURCE_TYPE_ENUM));
+                UnitOfMeasurement unitOfMeasurement = UnitOfMeasurement.findByCode(record.get(PARAMETER.UNIT_OF_MEASUREMENT_ENUM));
                 BusinessProcess process = null;
 
                 return new Parameter(record.get(PARAMETER.ID), record.get(PARAMETER.CODE), record.get(PARAMETER.DATA_TYPE_ENUM),

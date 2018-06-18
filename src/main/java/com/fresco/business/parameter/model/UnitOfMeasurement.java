@@ -1,6 +1,7 @@
 package com.fresco.business.parameter.model;
 
 import com.zacate.i18n.LocalizedEnum;
+import com.zacate.identifier.EnumLookup;
 import com.zacate.identifier.NaturalIdentifier;
 
 /**
@@ -16,6 +17,10 @@ public enum UnitOfMeasurement implements NaturalIdentifier<String>, LocalizedEnu
     @Override
     public String getCode() {
         return name();
+    }
+
+    public static UnitOfMeasurement findByCode(String code) {
+        return EnumLookup.findByCode(UnitOfMeasurement.class, code);
     }
 
 }
