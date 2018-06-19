@@ -1,13 +1,7 @@
 package com.fresco.business.parameter.logic;
 
-import static com.fresco.business.jooq.public_.Tables.PARAMETER;
-import static com.fresco.business.jooq.public_.Tables.PARAMETER_CONSTRAINT;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import com.fresco.business.BaseConfigTest;
 import java.sql.SQLException;
-import org.jooq.Result;
-import org.jooq.impl.DSL;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -16,48 +10,18 @@ import org.junit.Test;
  * @version 1.0
  * @since 1.0
  */
-public class ParameterConfigTest {
-
-    private static final String JDBC_URL = "jdbc:postgresql://localhost:5432/fresco?ApplicationName=IntegrationTest";
-    private static final String JDBC_USER = "fresco";
-    private static final String JDBC_PASSWORD = "fresco";
+public class ParameterConfigTest extends BaseConfigTest {
 
     @Test
     public void testParameterProvider() throws SQLException {
         ParameterProvider parameterProvider = new ParameterProvider();
 
-        try (Connection cnn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            parameterProvider.context = DSL.using(cnn);
-            parameterProvider.findAll().stream()
-                    .forEach(p -> {
-                        System.out.println("-> " + p);
-                        System.out.println("->" + p.getSources());
-                    });
-        }
-    }
-
-    @Test
-    @Ignore
-    public void testParameterConfig() throws SQLException {
-        try (Connection cnn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            Result<?> query = DSL.using(cnn)
-                    .select(
-                        PARAMETER.CODE,
-                        PARAMETER.DATA_TYPE_ENUM,
-                        PARAMETER.UNIT_OF_MEASUREMENT_ENUM,
-                        PARAMETER.VALUE,
-                        PARAMETER_CONSTRAINT.asterisk()
-                    )
-                    .from(PARAMETER)
-                    .join(PARAMETER_CONSTRAINT)
-                    .on(PARAMETER.ID.eq(PARAMETER_CONSTRAINT.ID))
-                    .orderBy(PARAMETER.ID.asc())
-                    .fetch();
-
-            System.out.println(">>>>>>>>>>>>>> " + query.size());
-            query.getValues(PARAMETER.CODE).stream()
-                    .forEach(code -> System.out.println(">>>>>>>>>>>>>> " + code));
-        }
+        parameterProvider.context = context;
+        parameterProvider.findAll().stream()
+                .forEach(p -> {
+                    System.out.println("-> " + p);
+                    System.out.println("->" + p.getSources());
+                });
     }
 
 }
