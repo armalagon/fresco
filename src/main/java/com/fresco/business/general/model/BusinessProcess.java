@@ -13,6 +13,6 @@ public interface BusinessProcess extends NaturalIdentifier<String>, LocalizedEnu
 
     BusinessProcess getParentProcess();
 
-    String getCategory();
+    BusinessCategory getCategory();
 
 }

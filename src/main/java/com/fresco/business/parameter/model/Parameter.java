@@ -6,6 +6,10 @@ import com.zacate.identifier.NaturalIdentifier;
 import com.zacate.model.ReadOnlyIdentifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -26,7 +30,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
 
     private final ParameterType parameterType;
     private final String dataType;
-    private final Object value;
+    private Object value;
     private final ValueSourceType valueSourceType;
     private final UnitOfMeasurement unitOfMeasurement;
     private final BusinessProcessType businessProcessType;
@@ -36,23 +40,23 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
     private final LocalDate maxDate;
     private final BigDecimal minTotal;
     private final BigDecimal maxTotal;
+    private final Set<ParameterSource> sources;
 
-    public Parameter(Integer id, ParameterType parameterType, String dataType, String value, ValueSourceType valueSourceType,
-            UnitOfMeasurement unitOfMeasurement, BusinessProcessType businessProcessType, Long minAmount, Long maxAmount, LocalDate minDate,
-            LocalDate maxDate, BigDecimal minTotal, BigDecimal maxTotal) {
-        super(id);
-        this.parameterType = parameterType;
-        this.dataType = dataType;
-        this.value = value;
-        this.valueSourceType = valueSourceType;
-        this.unitOfMeasurement = unitOfMeasurement;
-        this.businessProcessType = businessProcessType;
-        this.minAmount = minAmount;
-        this.maxAmount = maxAmount;
-        this.minDate = minDate;
-        this.maxDate = maxDate;
-        this.minTotal = minTotal;
-        this.maxTotal = maxTotal;
+    private Parameter(ParameterBuilder builder) {
+        super(builder.id);
+        this.parameterType = builder.parameterType;
+        this.dataType = builder.dataType;
+        this.value = builder.value;
+        this.valueSourceType = builder.valueSourceType;
+        this.unitOfMeasurement = builder.unitOfMeasurement;
+        this.businessProcessType = builder.businessProcessType;
+        this.minAmount = builder.minAmount;
+        this.maxAmount = builder.maxAmount;
+        this.minDate = builder.minDate;
+        this.maxDate = builder.maxDate;
+        this.minTotal = builder.minTotal;
+        this.maxTotal = builder.maxTotal;
+        this.sources = builder.sources;
     }
 
     @Override
@@ -70,6 +74,10 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
 
     public Object getValue() {
         return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     public ValueSourceType getValueSourceType() {
@@ -106,6 +114,10 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
 
     public BigDecimal getMaxTotal() {
         return maxTotal;
+    }
+
+    public Set<ParameterSource> getSources() {
+        return Collections.unmodifiableSet(sources);
     }
 
     public boolean atLeastOneConstraintIsConfigured() {
@@ -177,6 +189,104 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         return "Parameter{" + "id=" + id + ", code=" + getCode() + ", dataType=" + dataType + ", value=" + value + ", valueSourceType=" +
                 valueSourceType + ", unitOfMeasurement=" + unitOfMeasurement + ", businessProcessType=" + businessProcessType +
                 ", businessProcessCategory=" + businessProcessType.getCategory() + '}';
+    }
+
+    public static class ParameterBuilder {
+
+        private Integer id;
+        private ParameterType parameterType;
+        private String dataType;
+        private Object value;
+        private ValueSourceType valueSourceType;
+        private UnitOfMeasurement unitOfMeasurement;
+        private BusinessProcessType businessProcessType;
+        private Long minAmount;
+        private Long maxAmount;
+        private LocalDate minDate;
+        private LocalDate maxDate;
+        private BigDecimal minTotal;
+        private BigDecimal maxTotal;
+        private Set<ParameterSource> sources;
+
+        public ParameterBuilder(Integer id, String parameterTypeCode) {
+            this.id = id;
+            this.parameterType = ParameterType.findByCode(parameterTypeCode);
+            this.sources = new HashSet<>();
+        }
+
+        public ParameterBuilder dataType(String dataType) {
+            this.dataType = dataType;
+            return this;
+        }
+
+        public ParameterBuilder value(String value) {
+            // TODO Convert to the proper type
+            this.value = value;
+            return this;
+        }
+
+        public ParameterBuilder valueSourceType(String code) {
+            this.valueSourceType = ValueSourceType.findByCode(code);
+            return this;
+        }
+
+        public ParameterBuilder unitOfMeasurement(String code) {
+            this.unitOfMeasurement = UnitOfMeasurement.findByCode(code);
+            return this;
+        }
+
+        public ParameterBuilder businessProcessType(String code) {
+            this.businessProcessType = BusinessProcessType.findByCode(code);
+            return this;
+        }
+
+        public ParameterBuilder minAmount(Long minAmount) {
+            this.minAmount = minAmount;
+            return this;
+        }
+
+        public ParameterBuilder maxAmount(Long maxAmount) {
+            this.maxAmount = maxAmount;
+            return this;
+        }
+
+        public ParameterBuilder minDate(LocalDate minDate) {
+            this.minDate = minDate;
+            return this;
+        }
+
+        public ParameterBuilder maxDate(LocalDate maxDate) {
+            this.maxDate = maxDate;
+            return this;
+        }
+
+        public ParameterBuilder minTotal(BigDecimal minTotal) {
+            this.minTotal = minTotal;
+            return this;
+        }
+
+        public ParameterBuilder maxTotal(BigDecimal maxTotal) {
+            this.maxTotal = maxTotal;
+            return this;
+        }
+
+        public ParameterBuilder addSource(ParameterSource parameterSource) {
+            this.sources.add(parameterSource);
+            return this;
+        }
+
+        public ParameterBuilder addSource(Integer id, String code, String fullyQualifiedClassname, String query, Short sequenceNumber) {
+            return addSource(new ParameterSource(id, code, fullyQualifiedClassname, query, sequenceNumber));
+        }
+
+        public ParameterBuilder addSources(Collection<ParameterSource> sources) {
+            this.sources.addAll(sources);
+            return this;
+        }
+
+        public Parameter build() {
+            return new Parameter(this);
+        }
     }
 
 }

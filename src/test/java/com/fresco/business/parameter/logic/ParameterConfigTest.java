@@ -27,9 +27,12 @@ public class ParameterConfigTest {
         ParameterProvider parameterProvider = new ParameterProvider();
 
         try (Connection cnn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            parameterProvider.query = DSL.using(cnn);
+            parameterProvider.context = DSL.using(cnn);
             parameterProvider.findAll().stream()
-                    .forEach(p -> System.out.println(">>>>>>>>>>>>>> " + p));
+                    .forEach(p -> {
+                        System.out.println("-> " + p);
+                        System.out.println("->" + p.getSources());
+                    });
         }
     }
 
@@ -39,11 +42,11 @@ public class ParameterConfigTest {
         try (Connection cnn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             Result<?> query = DSL.using(cnn)
                     .select(
-                            PARAMETER.CODE,
-                            PARAMETER.DATA_TYPE_ENUM,
-                            PARAMETER.UNIT_OF_MEASUREMENT_ENUM,
-                            PARAMETER.VALUE,
-                            PARAMETER_CONSTRAINT.asterisk()
+                        PARAMETER.CODE,
+                        PARAMETER.DATA_TYPE_ENUM,
+                        PARAMETER.UNIT_OF_MEASUREMENT_ENUM,
+                        PARAMETER.VALUE,
+                        PARAMETER_CONSTRAINT.asterisk()
                     )
                     .from(PARAMETER)
                     .join(PARAMETER_CONSTRAINT)

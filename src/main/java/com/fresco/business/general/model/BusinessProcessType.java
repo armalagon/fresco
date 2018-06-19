@@ -13,23 +13,21 @@ public enum BusinessProcessType implements BusinessProcess {
     // -------------------------------------------------------------------------------------------------------------------------------------
     // SECURITY MODULE
     // -------------------------------------------------------------------------------------------------------------------------------------
-    SECURITY(null, "SECURITY"),
+    SECURITY(null, BusinessCategory.SECURITY),
     AUTHENTICATION(SECURITY),
     LOCKOUT_POLICY(SECURITY);
 
-    private static final String NO_CATEGORY_DEFINED = "<CATEGORY UNDEFINED>";
-
     private final BusinessProcess parentProcess;
-    private final String category;
+    private final BusinessCategory category;
 
     private BusinessProcessType(BusinessProcess parentProcess) {
         this(parentProcess, null);
     }
 
-    private BusinessProcessType(BusinessProcess parentProcess, String category) {
+    private BusinessProcessType(BusinessProcess parentProcess, BusinessCategory category) {
         this.parentProcess = parentProcess;
         if (category == null) {
-            this.category = parentProcess.getCategory() == null ? NO_CATEGORY_DEFINED : parentProcess.getCategory();
+            this.category = parentProcess.getCategory() == null ? BusinessCategory.UNDEFINED : parentProcess.getCategory();
         } else {
             this.category = category;
         }
@@ -46,7 +44,7 @@ public enum BusinessProcessType implements BusinessProcess {
     }
 
     @Override
-    public String getCategory() {
+    public BusinessCategory getCategory() {
         return category;
     }
 
