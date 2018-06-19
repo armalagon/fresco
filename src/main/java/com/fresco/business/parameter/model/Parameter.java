@@ -30,7 +30,8 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
 
     private final ParameterType parameterType;
     private final String dataType;
-    private Object value;
+    private String value;
+    private Object realValue;
     private final ValueSourceType valueSourceType;
     private final UnitOfMeasurement unitOfMeasurement;
     private final BusinessProcessType businessProcessType;
@@ -72,12 +73,19 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         return dataType;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
+    }
+
+    public Object getRealValue() {
+        if (value != null && realValue == null) {
+            // TODO Convert value
+        }
+        return realValue;
     }
 
     public ValueSourceType getValueSourceType() {
@@ -145,7 +153,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
     }
 
     public boolean valueIsIntegerType() {
-        return value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long;
+        return realValue instanceof Byte || realValue instanceof Short || realValue instanceof Integer || realValue instanceof Long;
     }
 
     public void validateConstraintConfig() throws WrongParameterConfiguration {
@@ -161,25 +169,25 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
             throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, getCode());
         }
 
-        if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
-            if (value instanceof Number) {
+        if (realValue != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
+            if (realValue instanceof Number) {
                 if (dateIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_DATE_DATATYPE,
-                            value.getClass().getSimpleName(), getCode());
+                            realValue.getClass().getSimpleName(), getCode());
                 }
 
                 if (valueIsIntegerType() && totalIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_TOTAL_DATATYPE,
-                            value.getClass().getSimpleName(), getCode());
+                            realValue.getClass().getSimpleName(), getCode());
                 }
-            } else if (value instanceof LocalDate) {
+            } else if (realValue instanceof LocalDate) {
                 if (atLeastOneNumericConstraintIsConfigured()) {
                     throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE,
-                            value.getClass().getSimpleName(), getCode());
+                            realValue.getClass().getSimpleName(), getCode());
                 }
             } else {
                 // Boolean, String, etc...
-                throw new WrongParameterConfiguration(ERROR_FOR_NO_CONFIGURATION_REQUIRED, getCode(), value.getClass().getSimpleName());
+                throw new WrongParameterConfiguration(ERROR_FOR_NO_CONFIGURATION_REQUIRED, getCode(), realValue.getClass().getSimpleName());
             }
         }
     }
@@ -192,11 +200,10 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
     }
 
     public static class ParameterBuilder {
-
         private Integer id;
         private ParameterType parameterType;
         private String dataType;
-        private Object value;
+        private String value;
         private ValueSourceType valueSourceType;
         private UnitOfMeasurement unitOfMeasurement;
         private BusinessProcessType businessProcessType;
@@ -220,7 +227,6 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         }
 
         public ParameterBuilder value(String value) {
-            // TODO Convert to the proper type
             this.value = value;
             return this;
         }
