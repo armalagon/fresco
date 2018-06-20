@@ -6,10 +6,8 @@ import com.zacate.identifier.NaturalIdentifier;
 import com.zacate.model.ReadOnlyIdentifier;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -57,7 +55,10 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         this.maxDate = builder.maxDate;
         this.minTotal = builder.minTotal;
         this.maxTotal = builder.maxTotal;
-        this.sources = builder.sources;
+        this.sources = builder.sources.stream()
+                .map(source -> new ParameterSource(source.getId(), source.getCode(), source.getFullyQualifiedClassname(),
+                        source.getQuery(), source.getSequenceNumber(), this))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -81,11 +82,11 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         this.value = value;
     }
 
-    public Object getRealValue() {
+    public <T> T getRealValue(Class<T> clazz) {
         if (value != null && realValue == null) {
             // TODO Convert value
         }
-        return realValue;
+        return (T) realValue;
     }
 
     public ValueSourceType getValueSourceType() {
@@ -126,6 +127,14 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
 
     public Set<ParameterSource> getSources() {
         return Collections.unmodifiableSet(sources);
+    }
+
+    public boolean containsIgnoreCase(String text) {
+        String __text = Objects.requireNonNull(text).toLowerCase();
+        return parameterType.containsIgnoreCase(text) || dataType.toLowerCase().contains(__text) || (value != null &&
+                value.toLowerCase().contains(__text)) || valueSourceType.containsIgnoreCase(text) ||
+                unitOfMeasurement.containsIgnoreCase(text) || businessProcessType.containsIgnoreCase(text) ||
+                businessProcessType.getCategory().containsIgnoreCase(text);
     }
 
     public boolean atLeastOneConstraintIsConfigured() {
@@ -261,8 +270,19 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
             return this;
         }
 
+        public ParameterBuilder minDate(java.sql.Date minDate) {
+            // TODO Mover a clase utilitaria: JDBCUtils
+            this.minDate = minDate != null ? LocalDate.ofEpochDay(minDate.getTime()) : null;
+            return this;
+        }
+
         public ParameterBuilder maxDate(LocalDate maxDate) {
             this.maxDate = maxDate;
+            return this;
+        }
+
+        public ParameterBuilder maxDate(java.sql.Date maxDate) {
+            this.maxDate = maxDate != null ? LocalDate.ofEpochDay(maxDate.getTime()) : null;
             return this;
         }
 
@@ -274,15 +294,6 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         public ParameterBuilder maxTotal(BigDecimal maxTotal) {
             this.maxTotal = maxTotal;
             return this;
-        }
-
-        public ParameterBuilder addSource(ParameterSource parameterSource) {
-            this.sources.add(parameterSource);
-            return this;
-        }
-
-        public ParameterBuilder addSource(Integer id, String code, String fullyQualifiedClassname, String query, Short sequenceNumber) {
-            return addSource(new ParameterSource(id, code, fullyQualifiedClassname, query, sequenceNumber));
         }
 
         public ParameterBuilder addSources(Collection<ParameterSource> sources) {

@@ -3,16 +3,17 @@ package com.fresco.business.parameter.logic;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER_CONSTRAINT;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER_SOURCE;
-import com.fresco.business.jooq.public_.tables.records.ParameterSourceRecord;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.business.parameter.model.ParameterSource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.fresco.business.parameter.model.ParameterType;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import org.jooq.DSLContext;
-import org.jooq.Result;
 
 /**
  *
@@ -26,11 +27,20 @@ public class ParameterProvider {
     @Inject
     DSLContext context;
 
-    public List<Parameter> findAll() {
-        Map<Integer, Result<ParameterSourceRecord>> sourcesGroupByParameterId = context.selectFrom(PARAMETER_SOURCE).fetch()
-                .intoGroups(PARAMETER_SOURCE.PARAMETER_ID);
+    private Map<String, Parameter> parameters;
 
-        List<Parameter> parameters = context
+    private List<Parameter> loadAll() {
+        Map<Integer, List<ParameterSource>> sourcesByParameterId = context
+                .selectFrom(PARAMETER_SOURCE)
+                .fetch(record -> {
+                    return new ParameterSource(record.get(PARAMETER_SOURCE.ID), record.get(PARAMETER_SOURCE.CODE),
+                            record.get(PARAMETER_SOURCE.PARAMETER_ID), record.get(PARAMETER_SOURCE.FULLY_QUALIFIED_CLASSNAME),
+                            record.get(PARAMETER_SOURCE.QUERY), record.get(PARAMETER_SOURCE.SEQUENCE_NUMBER));
+                })
+                .stream()
+                .collect(Collectors.groupingBy(ParameterSource::getParameterId));
+
+        return context
             .select(
                 PARAMETER.ID,
                 PARAMETER.CODE,
@@ -50,20 +60,6 @@ public class ParameterProvider {
             .leftJoin(PARAMETER_CONSTRAINT)
             .on(PARAMETER.ID.eq(PARAMETER_CONSTRAINT.ID))
             .fetch(record -> {
-                Result<ParameterSourceRecord> result = sourcesGroupByParameterId.get(record.get(PARAMETER.ID));
-
-                List<ParameterSource> sources;
-                if (result == null) {
-                    sources = Collections.emptyList();
-                } else {
-                    sources = result.map(innerRecord -> {
-                        return new ParameterSource(innerRecord.get(PARAMETER_SOURCE.ID), innerRecord.get(PARAMETER_SOURCE.CODE),
-                                innerRecord.get(PARAMETER_SOURCE.FULLY_QUALIFIED_CLASSNAME), innerRecord.get(PARAMETER_SOURCE.QUERY),
-                                innerRecord.get(PARAMETER_SOURCE.SEQUENCE_NUMBER));
-                    });
-                }
-
-                // TODO Map LocalDate constraints
                 return new Parameter.ParameterBuilder(record.get(PARAMETER.ID), record.get(PARAMETER.CODE))
                         .dataType(record.get(PARAMETER.DATA_TYPE_ENUM))
                         .value(record.get(PARAMETER.VALUE))
@@ -72,15 +68,47 @@ public class ParameterProvider {
                         .businessProcessType(record.get(PARAMETER.BUSINESS_PROCESS_TYPE_ENUM))
                         .minAmount(record.get(PARAMETER_CONSTRAINT.MIN_AMOUNT))
                         .maxAmount(record.get(PARAMETER_CONSTRAINT.MAX_AMOUNT))
-                        .minDate(null)
-                        .maxDate(null)
+                        .minDate(record.get(PARAMETER_CONSTRAINT.MIN_DATE))
+                        .maxDate(record.get(PARAMETER_CONSTRAINT.MAX_DATE))
                         .minTotal(record.get(PARAMETER_CONSTRAINT.MIN_TOTAL))
                         .maxTotal(record.get(PARAMETER_CONSTRAINT.MAX_TOTAL))
-                        .addSources(sources)
+                        .addSources(sourcesByParameterId.getOrDefault(record.get(PARAMETER.ID), Collections.emptyList()))
                         .build();
             });
+    }
 
-        return parameters;
+    @PostConstruct
+    public void onInit() {
+        parameters = loadAll().stream().collect(Collectors.toMap(
+                Parameter::getCode,
+                Function.identity(),
+                (oldValue, newValue) -> oldValue,
+                ConcurrentHashMap::new));
+    }
+
+    public List<Parameter> findAll() {
+        return new ArrayList<>(parameters.values());
+    }
+
+    public Optional<Parameter> findById(ParameterType parameterType) {
+        return Optional.ofNullable(parameters.get(parameterType.getCode()));
+    }
+
+    public List<Parameter> findByText(String value) {
+        return parameters.values().stream()
+                .filter(p -> p.containsIgnoreCase(value))
+                .collect(Collectors.toList());
+    }
+
+    public <T> Optional<T> getValue(ParameterType parameterType, Class<T> clazz) {
+        // TODO Pendiente
+        Parameter parameter = parameters.get(parameterType.getCode());
+
+        if (parameter == null) {
+            throw new IllegalArgumentException("There is no parameter with code []");
+        }
+
+        return null;
     }
 
 }

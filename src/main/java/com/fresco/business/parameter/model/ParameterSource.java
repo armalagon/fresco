@@ -12,21 +12,41 @@ import com.zacate.model.ReadOnlyIdentifier;
 public class ParameterSource extends ReadOnlyIdentifier<Integer> implements NaturalIdentifier<String> {
 
     private final String code;
+    private final Integer parameterId;
     private final String fullyQualifiedClassname;
     private final String query;
     private final Short sequenceNumber;
+    private final Parameter parameter;
 
-    public ParameterSource(Integer id, String code, String fullyQualifiedClassname, String query, Short sequenceNumber) {
+    public ParameterSource(Integer id, String code, Integer parameterId, String fullyQualifiedClassname, String query,
+            Short sequenceNumber) {
         super(id);
         this.code = code;
+        this.parameterId = parameterId;
         this.fullyQualifiedClassname = fullyQualifiedClassname;
         this.query = query;
         this.sequenceNumber = sequenceNumber;
+        this.parameter = null;
+    }
+
+    public ParameterSource(Integer id, String code, String fullyQualifiedClassname, String query, Short sequenceNumber,
+            Parameter parameter) {
+        super(id);
+        this.code = code;
+        this.parameterId = parameter.getId();
+        this.fullyQualifiedClassname = fullyQualifiedClassname;
+        this.query = query;
+        this.sequenceNumber = sequenceNumber;
+        this.parameter = parameter;
     }
 
     @Override
     public String getCode() {
         return code;
+    }
+
+    public Integer getParameterId() {
+        return parameterId;
     }
 
     public String getFullyQualifiedClassname() {
@@ -41,9 +61,13 @@ public class ParameterSource extends ReadOnlyIdentifier<Integer> implements Natu
         return sequenceNumber;
     }
 
+    public Parameter getParameter() {
+        return parameter;
+    }
+
     @Override
     public String toString() {
-        return "ParameterSource{" + "code=" + code + ", fullyQualifiedClassname=" + fullyQualifiedClassname + ", query=" + query +
+        return "ParameterSource{" + "id=" + id + ", code=" + code + ", fullyQualifiedClassname=" + fullyQualifiedClassname + ", query=" + query +
                 ", sequenceNumber=" + sequenceNumber + '}';
     }
 

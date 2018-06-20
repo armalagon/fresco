@@ -10,17 +10,19 @@ import org.junit.Test;
  * @version 1.0
  * @since 1.0
  */
-public class ParameterConfigTest extends BaseConfigTest {
+public class ParameterProviderTest extends BaseConfigTest {
 
     @Test
-    public void testParameterProvider() throws SQLException {
+    public void testFindAll() throws SQLException {
         ParameterProvider parameterProvider = new ParameterProvider();
 
         parameterProvider.context = context;
-        parameterProvider.findAll().stream()
+        parameterProvider.onInit();
+
+        System.out.println("-> Buscar por texto");
+        parameterProvider.findByText("autenticación").stream()
                 .forEach(p -> {
-                    System.out.println("-> " + p);
-                    System.out.println("->" + p.getSources());
+                    System.out.println("->" + p);
                 });
     }
 

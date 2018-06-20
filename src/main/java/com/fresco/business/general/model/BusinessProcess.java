@@ -1,7 +1,6 @@
 package com.fresco.business.general.model;
 
-import com.zacate.i18n.LocalizedEnum;
-import com.zacate.identifier.NaturalIdentifier;
+import com.zacate.identifier.StringNaturalIdentifierLocalizable;
 
 /**
  *
@@ -9,7 +8,7 @@ import com.zacate.identifier.NaturalIdentifier;
  * @version 1.0
  * @since 1.0
  */
-public interface BusinessProcess extends NaturalIdentifier<String>, LocalizedEnum {
+public interface BusinessProcess extends StringNaturalIdentifierLocalizable {
 
     BusinessProcess getParentProcess();
 
