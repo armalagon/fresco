@@ -8,9 +8,9 @@ import com.zacate.model.ReadOnlyIdentifier;
 import com.zacate.text.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -222,12 +222,12 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         private LocalDate maxDate;
         private BigDecimal minTotal;
         private BigDecimal maxTotal;
-        private Set<ParameterSource> sources;
+        private List<ParameterSource> sources;
 
         public ParameterBuilder(Integer id, String parameterTypeCode) {
             this.id = id;
             this.parameterType = ParameterType.findByCode(parameterTypeCode);
-            this.sources = new HashSet<>();
+            this.sources = new ArrayList<>();
         }
 
         public ParameterBuilder dataType(String dataType) {
@@ -295,7 +295,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
             return this;
         }
 
-        public ParameterBuilder addSources(Collection<ParameterSource> sources) {
+        public ParameterBuilder addSources(List<ParameterSource> sources) {
             this.sources.addAll(sources);
             return this;
         }
