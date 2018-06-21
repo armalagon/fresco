@@ -10,7 +10,10 @@ import com.zacate.exception.BusinessException;
  */
 public class ParameterNotFound extends BusinessException {
 
-    public ParameterNotFound() {
+    protected static final String ERROR_FOR_PARAMETER_NOT_FOUND = "notFound";
+
+    public ParameterNotFound(String parameterCode) {
+        super(ERROR_FOR_PARAMETER_NOT_FOUND, parameterCode);
     }
 
 }

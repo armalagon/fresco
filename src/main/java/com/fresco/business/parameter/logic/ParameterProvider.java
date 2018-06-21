@@ -3,6 +3,7 @@ package com.fresco.business.parameter.logic;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER_CONSTRAINT;
 import static com.fresco.business.jooq.public_.Tables.PARAMETER_SOURCE;
+import com.fresco.business.parameter.exception.ParameterNotFound;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.business.parameter.model.ParameterSource;
 import com.fresco.business.parameter.model.ParameterType;
@@ -28,6 +29,15 @@ public class ParameterProvider {
     DSLContext context;
 
     private Map<String, Parameter> parameters;
+
+    @PostConstruct
+    public void onInit() {
+        parameters = loadAll().stream().collect(Collectors.toMap(
+                Parameter::getCode,
+                Function.identity(),
+                (oldValue, newValue) -> oldValue,
+                ConcurrentHashMap::new));
+    }
 
     private List<Parameter> loadAll() {
         Map<Integer, List<ParameterSource>> sourcesByParameterId = context
@@ -77,35 +87,29 @@ public class ParameterProvider {
             });
     }
 
-    @PostConstruct
-    public void onInit() {
-        parameters = loadAll().stream().collect(Collectors.toMap(
-                Parameter::getCode,
-                Function.identity(),
-                (oldValue, newValue) -> oldValue,
-                ConcurrentHashMap::new));
-    }
-
     public List<Parameter> findAll() {
         return new ArrayList<>(parameters.values());
     }
 
     public Optional<Parameter> findById(ParameterType parameterType) {
+        Objects.requireNonNull(parameterType);
         return Optional.ofNullable(parameters.get(parameterType.getCode()));
     }
 
     public List<Parameter> findByText(String value) {
-        return parameters.values().stream()
+        return parameters.values().parallelStream()
                 .filter(p -> p.containsIgnoreCase(value))
                 .collect(Collectors.toList());
     }
 
-    public <T> Optional<T> getValue(ParameterType parameterType, Class<T> clazz) {
+    public <T> Optional<T> getValue(ParameterType parameterType, Class<T> clazz) throws ParameterNotFound {
+        Objects.requireNonNull(parameterType);
+        Objects.requireNonNull(clazz);
         // TODO Pendiente
         Parameter parameter = parameters.get(parameterType.getCode());
 
         if (parameter == null) {
-            throw new IllegalArgumentException("There is no parameter with code []");
+            throw new ParameterNotFound(parameterType.getCode());
         }
 
         return null;

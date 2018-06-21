@@ -4,9 +4,13 @@ import com.fresco.business.general.model.BusinessProcessType;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.zacate.identifier.NaturalIdentifier;
 import com.zacate.model.ReadOnlyIdentifier;
+import com.zacate.text.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -17,14 +21,9 @@ import java.util.stream.Collectors;
  */
 public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIdentifier<String> {
 
-    private static final String ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED = "allConstraintsWereConfigured";
-    private static final String ERROR_FOR_NO_CONSTRAINTS_ALLOWED = "noConstraintsAllowed";
-    private static final String ERROR_FOR_DATA_TYPE_MISMATCH = "dataTypeMismatch";
-    private static final String ERROR_FOR_NO_CONFIGURATION_REQUIRED = "noConfigurationRequired";
-
-    private static final String KEY_FOR_DATE_DATATYPE = "{[].dataType.date}";
-    private static final String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
-    private static final String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
+    protected static final String KEY_FOR_DATE_DATATYPE = "{[].dataType.date}";
+    protected static final String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
+    protected static final String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
 
     private final ParameterType parameterType;
     private final String dataType;
@@ -130,11 +129,11 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
     }
 
     public boolean containsIgnoreCase(String text) {
-        String __text = Objects.requireNonNull(text).toLowerCase();
-        return parameterType.containsIgnoreCase(text) || dataType.toLowerCase().contains(__text) || (value != null &&
-                value.toLowerCase().contains(__text)) || valueSourceType.containsIgnoreCase(text) ||
-                unitOfMeasurement.containsIgnoreCase(text) || businessProcessType.containsIgnoreCase(text) ||
-                businessProcessType.getCategory().containsIgnoreCase(text);
+        return SimpleTextSearch.search(text)
+                .field(parameterType, valueSourceType, unitOfMeasurement, businessProcessType)
+                .field(dataType, value)
+                .field(businessProcessType.getCategory())
+                .contains();
     }
 
     public boolean atLeastOneConstraintIsConfigured() {
@@ -171,32 +170,32 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         }
 
         if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
-            throw new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, getCode());
+            throw WrongParameterConfiguration.noConstraintsAllowed(getCode());
         }
 
         if (allConstraintsAreConfigured()) {
-            throw new WrongParameterConfiguration(ERROR_FOR_ALL_CONSTRAINTS_WERE_CONFIGURED, getCode());
+            throw WrongParameterConfiguration.allConstraintsAreConfigured(getCode());
         }
 
         if (realValue != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
             if (realValue instanceof Number) {
                 if (dateIsConfigured()) {
-                    throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_DATE_DATATYPE,
+                    throw WrongParameterConfiguration.dataTypeMismatch(KEY_FOR_DATE_DATATYPE,
                             realValue.getClass().getSimpleName(), getCode());
                 }
 
                 if (valueIsIntegerType() && totalIsConfigured()) {
-                    throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_TOTAL_DATATYPE,
+                    throw WrongParameterConfiguration.dataTypeMismatch(KEY_FOR_TOTAL_DATATYPE,
                             realValue.getClass().getSimpleName(), getCode());
                 }
             } else if (realValue instanceof LocalDate) {
                 if (atLeastOneNumericConstraintIsConfigured()) {
-                    throw new WrongParameterConfiguration(ERROR_FOR_DATA_TYPE_MISMATCH, KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE,
+                    throw WrongParameterConfiguration.dataTypeMismatch(KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE,
                             realValue.getClass().getSimpleName(), getCode());
                 }
             } else {
                 // Boolean, String, etc...
-                throw new WrongParameterConfiguration(ERROR_FOR_NO_CONFIGURATION_REQUIRED, getCode(), realValue.getClass().getSimpleName());
+                throw WrongParameterConfiguration.noConfigurationRequired(getCode(), realValue.getClass().getSimpleName());
             }
         }
     }
