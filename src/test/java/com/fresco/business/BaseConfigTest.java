@@ -1,5 +1,6 @@
 package com.fresco.business;
 
+import com.zacate.jdbc.JDBCUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -30,12 +31,8 @@ public class BaseConfigTest {
     }
 
     @After
-    public void destroyResources() throws SQLException {
+    public void destroyResources() throws Exception {
         context = null;
-        if (cnn != null) {
-            if (!cnn.isClosed()) {
-                cnn.close();
-            }
-        }
+        JDBCUtils.close(cnn);
     }
 }

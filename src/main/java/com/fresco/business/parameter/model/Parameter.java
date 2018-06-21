@@ -3,6 +3,7 @@ package com.fresco.business.parameter.model;
 import com.fresco.business.general.model.BusinessProcessType;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.zacate.identifier.NaturalIdentifier;
+import com.zacate.jdbc.JDBCUtils;
 import com.zacate.model.ReadOnlyIdentifier;
 import com.zacate.text.SimpleTextSearch;
 import java.math.BigDecimal;
@@ -270,18 +271,17 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         }
 
         public ParameterBuilder minDate(java.sql.Date minDate) {
-            // TODO Mover a clase utilitaria: JDBCUtils
-            this.minDate = minDate != null ? LocalDate.ofEpochDay(minDate.getTime()) : null;
+            this.minDate = JDBCUtils.toLocalDate(minDate);
             return this;
         }
 
         public ParameterBuilder maxDate(LocalDate maxDate) {
-            this.maxDate = maxDate;
+            this.maxDate = minDate;
             return this;
         }
 
         public ParameterBuilder maxDate(java.sql.Date maxDate) {
-            this.maxDate = maxDate != null ? LocalDate.ofEpochDay(maxDate.getTime()) : null;
+            this.maxDate = JDBCUtils.toLocalDate(maxDate);
             return this;
         }
 

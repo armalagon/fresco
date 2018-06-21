@@ -27,6 +27,10 @@ public class WrongParameterConfiguration extends BusinessException {
         super(errorCode, expandKeyBasedOnCurrentClass, arguments);
     }
 
+    // -------------------------------------------------------------------------------------------------------------------------------------
+    // Static factory methods
+    // -------------------------------------------------------------------------------------------------------------------------------------
+
     public static WrongParameterConfiguration noConstraintsAllowed(String parameterCode) {
         return new WrongParameterConfiguration(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, parameterCode);
     }
