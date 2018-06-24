@@ -14,6 +14,8 @@ public class ParameterProviderTest extends BaseConfigTest {
 
     @Test
     public void testFindAll() throws SQLException {
+        System.out.println(promptCurrentlyExecutingTestMethod());
+
         ParameterProvider parameterProvider = new ParameterProvider();
 
         parameterProvider.context = context;
@@ -22,7 +24,7 @@ public class ParameterProviderTest extends BaseConfigTest {
         System.out.println("-> Buscar por texto");
         parameterProvider.findByText("autenticación").stream()
                 .forEach(p -> {
-                    System.out.println("->" + p);
+                    System.out.println("-> " + p);
                 });
     }
 

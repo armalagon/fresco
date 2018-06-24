@@ -107,6 +107,7 @@
                         <jdbc.url>${jdbc.url}?ApplicationName=${project.artifactId}-test</jdbc.url>
                         <jdbc.user>${jdbc.user}</jdbc.user>
                         <jdbc.password>${jdbc.password}</jdbc.password>
+                        <app.prompt>${project.artifactId}@${project.version}--></app.prompt>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

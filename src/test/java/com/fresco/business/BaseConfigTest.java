@@ -17,9 +17,12 @@ import org.junit.Before;
  */
 public class BaseConfigTest {
 
-    private static final String JDBC_URL = System.getProperty("jdbc.url");
-    private static final String JDBC_USER = System.getProperty("jdbc.user");
-    private static final String JDBC_PASSWORD = System.getProperty("jdbc.password");
+    protected static final String JDBC_URL = System.getProperty("jdbc.url");
+    protected static final String JDBC_USER = System.getProperty("jdbc.user");
+    protected static final String JDBC_PASSWORD = System.getProperty("jdbc.password");
+
+    protected static final String APPLICATION_PROMPT = System.getProperty("app.prompt") + " ";
+    protected static final String METHOD_SEPARATOR = "-------------------------------------------------------";
 
     protected Connection cnn;
     protected DSLContext context;
@@ -35,4 +38,28 @@ public class BaseConfigTest {
         context = null;
         JDBCUtils.close(cnn);
     }
+
+    protected String getAppPrompt() {
+        return APPLICATION_PROMPT;
+    }
+
+    protected String getCurrentlyExecutingTestMethod() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        String methodName = null;
+
+        if (!(stack == null || stack.length == 0 || stack.length < 4)) {
+            methodName = stack[3].getMethodName();
+        }
+
+        return methodName;
+    }
+
+    protected String promptCurrentlyExecutingTestMethod() {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append(METHOD_SEPARATOR).append(System.lineSeparator());
+        prompt.append(getAppPrompt()).append(getCurrentlyExecutingTestMethod()).append(System.lineSeparator());
+        prompt.append(METHOD_SEPARATOR).append(System.lineSeparator());
+        return prompt.toString();
+    }
+
 }
