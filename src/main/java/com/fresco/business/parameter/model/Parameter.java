@@ -1,7 +1,6 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcessType;
-import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.zacate.identifier.NaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
 import com.zacate.model.ReadOnlyIdentifier;
@@ -29,7 +28,6 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
     private final ParameterType parameterType;
     private final String dataType;
     private String value;
-    private Object realValue;
     private final ValueSourceType valueSourceType;
     private final UnitOfMeasurement unitOfMeasurement;
     private final BusinessProcessType businessProcessType;
@@ -82,13 +80,6 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         this.value = value;
     }
 
-    public <T> T getRealValue(Class<T> clazz) {
-        if (value != null && realValue == null) {
-            // TODO Convert value
-        }
-        return (T) realValue;
-    }
-
     public ValueSourceType getValueSourceType() {
         return valueSourceType;
     }
@@ -137,6 +128,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
                 .contains();
     }
 
+    /*
     public boolean atLeastOneConstraintIsConfigured() {
         return !(minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null);
     }
@@ -200,6 +192,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
             }
         }
     }
+    */
 
     @Override
     public String toString() {

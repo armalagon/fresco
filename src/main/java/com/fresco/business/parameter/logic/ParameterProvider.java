@@ -7,6 +7,7 @@ import com.fresco.business.parameter.exception.ParameterNotFound;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.business.parameter.model.ParameterSource;
 import com.fresco.business.parameter.model.ParameterType;
+import com.zacate.conversion.DefaultDatatypeConverter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -104,15 +105,14 @@ public class ParameterProvider {
 
     public <T> Optional<T> getValue(ParameterType parameterType, Class<T> clazz) throws ParameterNotFound {
         Objects.requireNonNull(parameterType);
-        Objects.requireNonNull(clazz);
-        // TODO Pendiente
+
         Parameter parameter = parameters.get(parameterType.getCode());
 
         if (parameter == null) {
             throw new ParameterNotFound(parameterType.getCode());
         }
 
-        return null;
+        return Optional.ofNullable(DefaultDatatypeConverter.getInstance().getValue(parameter.getValue(), clazz));
     }
 
 }
