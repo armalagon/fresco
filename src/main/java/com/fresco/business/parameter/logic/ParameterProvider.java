@@ -10,6 +10,7 @@ import com.fresco.business.parameter.model.ParameterType;
 import com.zacate.conversion.DefaultDatatypeConverter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -29,7 +30,7 @@ public class ParameterProvider {
     @Inject
     DSLContext context;
 
-    private Map<String, Parameter> parameters;
+    private ConcurrentMap<String, Parameter> parameters;
 
     @PostConstruct
     public void onInit() {
@@ -104,7 +105,7 @@ public class ParameterProvider {
     }
 
     public <T> Optional<T> getValue(ParameterType parameterType, Class<T> clazz) throws ParameterNotFound {
-        Objects.requireNonNull(parameterType);
+        Objects.requireNonNull(parameterType, "parameterType");
 
         Parameter parameter = parameters.get(parameterType.getCode());
 

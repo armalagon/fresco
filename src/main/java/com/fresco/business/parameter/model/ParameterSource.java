@@ -29,14 +29,13 @@ public class ParameterSource extends ReadOnlyIdentifier<Integer> implements Natu
         this.parameter = null;
     }
 
-    public ParameterSource(Integer id, String code, String fullyQualifiedClassname, String query, Short sequenceNumber,
-            Parameter parameter) {
-        super(id);
-        this.code = code;
+    public ParameterSource(ParameterSource parameterSource, Parameter parameter) {
+        super(parameterSource.id);
+        this.code = parameterSource.code;
         this.parameterId = parameter.getId();
-        this.fullyQualifiedClassname = fullyQualifiedClassname;
-        this.query = query;
-        this.sequenceNumber = sequenceNumber;
+        this.fullyQualifiedClassname = parameterSource.fullyQualifiedClassname;
+        this.query = parameterSource.query;
+        this.sequenceNumber = parameterSource.sequenceNumber;
         this.parameter = parameter;
     }
 
@@ -67,8 +66,8 @@ public class ParameterSource extends ReadOnlyIdentifier<Integer> implements Natu
 
     @Override
     public String toString() {
-        return "ParameterSource{" + "id=" + id + ", code=" + code + ", fullyQualifiedClassname=" + fullyQualifiedClassname + ", query=" + query +
-                ", sequenceNumber=" + sequenceNumber + '}';
+        return "ParameterSource{" + "id=" + id + ", code=" + code + ", fullyQualifiedClassname=" + fullyQualifiedClassname + ", query=" +
+                query + ", sequenceNumber=" + sequenceNumber + '}';
     }
 
 }

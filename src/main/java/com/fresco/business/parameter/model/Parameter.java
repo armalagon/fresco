@@ -21,10 +21,6 @@ import java.util.stream.Collectors;
  */
 public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIdentifier<String> {
 
-    protected static final String KEY_FOR_DATE_DATATYPE = "{[].dataType.date}";
-    protected static final String KEY_FOR_TOTAL_DATATYPE = "{[].dataType.total}";
-    protected static final String KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE = "{[].dataType.amountOrTotal}";
-
     private final ParameterType parameterType;
     private final String dataType;
     private String value;
@@ -54,8 +50,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         this.minTotal = builder.minTotal;
         this.maxTotal = builder.maxTotal;
         this.sources = builder.sources.stream()
-                .map(source -> new ParameterSource(source.getId(), source.getCode(), source.getFullyQualifiedClassname(),
-                        source.getQuery(), source.getSequenceNumber(), this))
+                .map(source -> new ParameterSource(source, this))
                 .collect(Collectors.toSet());
     }
 

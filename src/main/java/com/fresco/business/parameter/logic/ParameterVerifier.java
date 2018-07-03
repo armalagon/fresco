@@ -12,10 +12,10 @@ import javax.ejb.Startup;
  */
 @Singleton
 @Startup
-public class ParameterConfigChecker {
+public class ParameterVerifier {
 
     @PostConstruct
-    public void validateConfigOnStartup() {
+    public void validateOnStartup() {
 
     }
 
