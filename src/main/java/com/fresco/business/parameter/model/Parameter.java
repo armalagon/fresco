@@ -7,11 +7,10 @@ import com.zacate.model.ReadOnlyIdentifier;
 import com.zacate.text.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -49,9 +48,7 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         this.maxDate = builder.maxDate;
         this.minTotal = builder.minTotal;
         this.maxTotal = builder.maxTotal;
-        this.sources = builder.sources.stream()
-                .map(source -> new ParameterSource(source, this))
-                .collect(Collectors.toSet());
+        this.sources = builder.sources;
     }
 
     @Override
@@ -210,12 +207,12 @@ public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIde
         private LocalDate maxDate;
         private BigDecimal minTotal;
         private BigDecimal maxTotal;
-        private List<ParameterSource> sources;
+        private Set<ParameterSource> sources;
 
         public ParameterBuilder(Integer id, String parameterTypeCode) {
             this.id = id;
             this.parameterType = ParameterType.findByCode(parameterTypeCode);
-            this.sources = new ArrayList<>();
+            this.sources = new HashSet<>();
         }
 
         public ParameterBuilder dataType(String dataType) {
