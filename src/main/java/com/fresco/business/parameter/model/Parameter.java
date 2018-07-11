@@ -3,7 +3,7 @@ package com.fresco.business.parameter.model;
 import com.fresco.business.general.model.BusinessProcessType;
 import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
-import com.zacate.text.SimpleTextSearch;
+import com.zacate.util.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
