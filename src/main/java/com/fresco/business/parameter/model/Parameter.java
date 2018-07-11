@@ -1,9 +1,8 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcessType;
-import com.zacate.identifier.NaturalIdentifier;
+import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
-import com.zacate.model.ReadOnlyIdentifier;
 import com.zacate.text.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,7 +17,7 @@ import java.util.Set;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter extends ReadOnlyIdentifier<Integer> implements NaturalIdentifier<String> {
+public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
 
     private final ParameterType parameterType;
     private final String dataType;

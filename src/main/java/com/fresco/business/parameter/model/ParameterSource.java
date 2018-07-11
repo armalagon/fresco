@@ -1,7 +1,6 @@
 package com.fresco.business.parameter.model;
 
-import com.zacate.identifier.NaturalIdentifier;
-import com.zacate.model.ReadOnlyIdentifier;
+import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
 
 /**
  *
@@ -9,7 +8,7 @@ import com.zacate.model.ReadOnlyIdentifier;
  * @version 1.0
  * @since 1.0
  */
-public class ParameterSource extends ReadOnlyIdentifier<Integer> implements NaturalIdentifier<String> {
+public class ParameterSource extends IntegerReadOnlyAndStringNaturalIdentifier {
 
     private final String code;
     private final Integer parameterId;
