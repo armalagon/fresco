@@ -8,10 +8,14 @@ import com.zacate.bean.BeanUtils;
 import com.zacate.conversion.DefaultDatatypeConverter;
 import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
+import com.zacate.util.ErrorCollector;
 import com.zacate.util.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -130,17 +134,17 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
             return Collections.emptyList();
         }
 
-        List<String> errors = new ArrayList<>();
+        ErrorCollector errors = new ErrorCollector();
 
         boolean atLeastOneIsConfigured = !(minAmount == null && maxAmount == null && minDate == null && maxDate == null &&
                 minTotal == null && maxTotal == null);
 
         if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
-            errors.add(new NoConfigurationRequired(getCode()).getMessage());
+            errors.add(new NoConfigurationRequired(getCode()));
         }
 
         if (minAmount != null && maxAmount != null && minDate != null && maxDate != null && minTotal != null && maxTotal != null) {
-            errors.add(new AllConstraintsConfigured(getCode()).getMessage());
+            errors.add(new AllConstraintsConfigured(getCode()));
         }
 
         if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
@@ -148,36 +152,33 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
             try {
                 valueBasedOnType = convertValue();
             } catch (ClassNotFoundException ex) {
-                errors.add(ex.getMessage());
-                return errors;
+                errors.add(ex);
+                return errors.getMessages();
             }
 
             if (valueBasedOnType instanceof Number) {
                 if (!(minDate == null && maxDate == null)) {
-                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.DATE)
-                            .getMessage());
+                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.DATE));
                 }
 
                 if (BeanUtils.isIntegerType(valueBasedOnType) && !(minTotal == null && maxTotal == null)) {
-                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.TOTAL)
-                            .getMessage());
+                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.TOTAL));
                 }
 
                 if (valueBasedOnType instanceof BigDecimal && !(minAmount == null && maxAmount == null)) {
-                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT)
-                            .getMessage());
+                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT));
                 }
             } else if (BeanUtils.isDateType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
                     maxTotal == null)) {
-                errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT_OR_TOTAL)
-                            .getMessage());
+                errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType
+                        .AMOUNT_OR_TOTAL));
             } else {
                 // Boolean, String, etc...
-                errors.add(new NoConfigurationRequired(getCode(), dataType).getMessage());
+                errors.add(new NoConfigurationRequired(getCode(), dataType));
             }
         }
 
-        return errors;
+        return errors.getMessages();
     }
 
     @Override
