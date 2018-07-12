@@ -1,15 +1,17 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcessType;
+import com.fresco.business.parameter.exception.AllConstraintsConfigured;
+import com.fresco.business.parameter.exception.NoConfigurationRequired;
+import com.fresco.business.parameter.exception.WrongParameterConfiguration;
+import com.zacate.bean.BeanUtils;
+import com.zacate.conversion.DefaultDatatypeConverter;
 import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
 import com.zacate.util.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -71,6 +73,10 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
         this.value = value;
     }
 
+    public Object convertValue() throws ClassNotFoundException {
+        return DefaultDatatypeConverter.getInstance().getValue(value, Class.forName(dataType));
+    }
+
     public ValueSourceType getValueSourceType() {
         return valueSourceType;
     }
@@ -119,71 +125,60 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
                 .contains();
     }
 
-    /*
-    public boolean atLeastOneConstraintIsConfigured() {
-        return !(minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null);
-    }
-
-    public boolean allConstraintsAreConfigured() {
-        return minAmount != null && maxAmount != null && minDate != null && maxDate != null && minTotal != null && maxTotal != null;
-    }
-
-    public boolean noConstraintConfigured() {
-        return minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null;
-    }
-
-    public boolean dateIsConfigured() {
-        return !(minDate == null && maxDate == null);
-    }
-
-    public boolean totalIsConfigured() {
-        return !(minTotal == null && maxTotal == null);
-    }
-
-    public boolean atLeastOneNumericConstraintIsConfigured() {
-        return !(minAmount == null && maxAmount == null && minTotal == null && maxTotal == null);
-    }
-
-    public boolean valueIsIntegerType() {
-        return realValue instanceof Byte || realValue instanceof Short || realValue instanceof Integer || realValue instanceof Long;
-    }
-
-    public void validateConstraintConfig() throws WrongParameterConfiguration {
-        if (noConstraintConfigured()) {
-            return;
+    public List<String> validate() {
+        if (minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null) {
+            return Collections.emptyList();
         }
 
-        if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
-            throw WrongParameterConfiguration.noConstraintsAllowed(getCode());
+        List<String> errors = new ArrayList<>();
+
+        boolean atLeastOneIsConfigured = !(minAmount == null && maxAmount == null && minDate == null && maxDate == null &&
+                minTotal == null && maxTotal == null);
+
+        if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
+            errors.add(new NoConfigurationRequired(getCode()).getMessage());
         }
 
-        if (allConstraintsAreConfigured()) {
-            throw WrongParameterConfiguration.allConstraintsAreConfigured(getCode());
+        if (minAmount != null && maxAmount != null && minDate != null && maxDate != null && minTotal != null && maxTotal != null) {
+            errors.add(new AllConstraintsConfigured(getCode()).getMessage());
         }
 
-        if (realValue != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneConstraintIsConfigured()) {
-            if (realValue instanceof Number) {
-                if (dateIsConfigured()) {
-                    throw WrongParameterConfiguration.dataTypeMismatch(KEY_FOR_DATE_DATATYPE,
-                            realValue.getClass().getSimpleName(), getCode());
+        if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
+            Object valueBasedOnType;
+            try {
+                valueBasedOnType = convertValue();
+            } catch (ClassNotFoundException ex) {
+                errors.add(ex.getMessage());
+                return errors;
+            }
+
+            if (valueBasedOnType instanceof Number) {
+                if (!(minDate == null && maxDate == null)) {
+                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.DATE)
+                            .getMessage());
                 }
 
-                if (valueIsIntegerType() && totalIsConfigured()) {
-                    throw WrongParameterConfiguration.dataTypeMismatch(KEY_FOR_TOTAL_DATATYPE,
-                            realValue.getClass().getSimpleName(), getCode());
+                if (BeanUtils.isIntegerType(valueBasedOnType) && !(minTotal == null && maxTotal == null)) {
+                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.TOTAL)
+                            .getMessage());
                 }
-            } else if (realValue instanceof LocalDate) {
-                if (atLeastOneNumericConstraintIsConfigured()) {
-                    throw WrongParameterConfiguration.dataTypeMismatch(KEY_FOR_AMOUNT_OR_TOTAL_DATATYPE,
-                            realValue.getClass().getSimpleName(), getCode());
+
+                if (valueBasedOnType instanceof BigDecimal && !(minAmount == null && maxAmount == null)) {
+                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT)
+                            .getMessage());
                 }
+            } else if (BeanUtils.isDateType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
+                    maxTotal == null)) {
+                errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT_OR_TOTAL)
+                            .getMessage());
             } else {
                 // Boolean, String, etc...
-                throw WrongParameterConfiguration.noConfigurationRequired(getCode(), realValue.getClass().getSimpleName());
+                errors.add(new NoConfigurationRequired(getCode(), dataType).getMessage());
             }
         }
+
+        return errors;
     }
-    */
 
     @Override
     public String toString() {

@@ -35,6 +35,11 @@ public class ParameterProviderTest extends BaseConfigTest {
 
         Integer months = parameterProvider.getValue(ParameterType.PASSWORD_EXPIRATION, Integer.class).orElse(null);
         System.out.println("-> ParameterType.PASSWORD_EXPIRATION = " + months);
+
+        parameterProvider.findAll()
+                .forEach(p -> {
+                    System.out.println("---> Errores encontrados " + p.getCode() + ": " + p.validate());
+                });
     }
 
 }
