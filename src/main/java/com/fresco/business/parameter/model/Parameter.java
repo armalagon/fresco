@@ -6,6 +6,7 @@ import com.fresco.business.parameter.exception.NoConfigurationRequired;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.zacate.bean.BeanUtils;
 import com.zacate.conversion.DefaultDatatypeConverter;
+import com.zacate.i18n.Localized;
 import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
 import com.zacate.util.ErrorCollector;
@@ -23,7 +24,7 @@ import java.util.Set;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
+public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier implements Localized {
 
     private final ParameterType parameterType;
     private final String dataType;
@@ -63,6 +64,11 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier {
 
     public ParameterType getParameterType() {
         return parameterType;
+    }
+
+    @Override
+    public String getMessage() {
+        return parameterType.getMessage();
     }
 
     public String getDataType() {

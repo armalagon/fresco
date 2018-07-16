@@ -1,7 +1,7 @@
 package com.fresco.business.parameter.exception;
 
 import com.zacate.exception.BusinessException;
-import com.zacate.i18n.LocalizedEnum;
+import com.zacate.i18n.Localized;
 
 /**
  *
@@ -13,7 +13,7 @@ public class WrongParameterConfiguration extends BusinessException {
 
     protected static final String ERROR_FOR_DATA_TYPE_MISMATCH = "dataTypeMismatch";
 
-    public enum ConstraintType implements LocalizedEnum {
+    public enum ConstraintType implements Localized {
         DATE, TOTAL, AMOUNT, AMOUNT_OR_TOTAL
     }
 
