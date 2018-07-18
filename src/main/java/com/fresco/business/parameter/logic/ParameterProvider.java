@@ -61,6 +61,8 @@ public class ParameterProvider {
                 PARAMETER.VALUE_SOURCE_TYPE_ENUM,
                 PARAMETER.UNIT_OF_MEASUREMENT_ENUM,
                 PARAMETER.BUSINESS_PROCESS_TYPE_ENUM,
+                PARAMETER.CREATED_BY,
+                PARAMETER.CREATED_ON,
                 PARAMETER_CONSTRAINT.MIN_AMOUNT,
                 PARAMETER_CONSTRAINT.MAX_AMOUNT,
                 PARAMETER_CONSTRAINT.MIN_DATE,
@@ -72,7 +74,8 @@ public class ParameterProvider {
             .leftJoin(PARAMETER_CONSTRAINT)
             .on(PARAMETER.ID.eq(PARAMETER_CONSTRAINT.ID))
             .fetch(record -> {
-                return new Parameter.ParameterBuilder(record.get(PARAMETER.ID), record.get(PARAMETER.CODE))
+                return new Parameter.ParameterBuilder(record.get(PARAMETER.ID), record.get(PARAMETER.CODE),
+                        record.get(PARAMETER.CREATED_BY), record.get(PARAMETER.CREATED_ON))
                         .dataType(record.get(PARAMETER.DATA_TYPE_ENUM))
                         .value(record.get(PARAMETER.VALUE))
                         .valueSourceType(record.get(PARAMETER.VALUE_SOURCE_TYPE_ENUM))

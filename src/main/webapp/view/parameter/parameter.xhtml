@@ -82,7 +82,7 @@
 
                         <f:facet name="footer">
                             <p:commandButton id="btnSave" value="Save" />
-                            <p:commandButton id="btnCancel" value="Cancel" action="#{parameterBean.cancel}" update="searchParameter crudParameter" />
+                            <p:commandButton id="btnCancel" value="Cancel" immediate="true" action="#{parameterBean.cancel}" update="searchParameter crudParameter" />
                         </f:facet>
                     </h:panelGrid>
                 </p:panel>

@@ -164,6 +164,9 @@
                         <password>${jdbc.password}</password>
                     </jdbc>
                     <generator>
+                        <generate>
+                            <javaTimeTypes>true</javaTimeTypes>
+                        </generate>
                         <strategy>
                             <name>com.zacate.jooq.TableSuffixStrategy</name>
                         </strategy>

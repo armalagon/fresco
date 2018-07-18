@@ -1,6 +1,8 @@
 package com.fresco.business.parameter.model;
 
 import com.fresco.business.general.model.BusinessProcessType;
+import com.fresco.business.general.model.GetterInsertable;
+import com.fresco.business.general.model.Updatable;
 import com.fresco.business.parameter.exception.AllConstraintsConfigured;
 import com.fresco.business.parameter.exception.NoConfigurationRequired;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
@@ -13,6 +15,7 @@ import com.zacate.util.ErrorCollector;
 import com.zacate.util.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +27,7 @@ import java.util.Set;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier implements Localized {
+public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier implements Localized, GetterInsertable, Updatable {
 
     private final ParameterType parameterType;
     private final String dataType;
@@ -39,6 +42,10 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier impleme
     private final BigDecimal minTotal;
     private final BigDecimal maxTotal;
     private final Set<ParameterSource> sources;
+    private final Integer createdBy;
+    private final LocalDateTime createdOn;
+    private Integer updatedBy;
+    private LocalDateTime updatedOn;
 
     private Parameter(ParameterBuilder builder) {
         super(builder.id);
@@ -55,6 +62,8 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier impleme
         this.minTotal = builder.minTotal;
         this.maxTotal = builder.maxTotal;
         this.sources = builder.sources;
+        this.createdBy = builder.createdBy;
+        this.createdOn = builder.createdOn;
     }
 
     @Override
@@ -125,6 +134,36 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier impleme
 
     public Set<ParameterSource> getSources() {
         return Collections.unmodifiableSet(sources);
+    }
+
+    @Override
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    @Override
+    public Integer getUpdatedBy() {
+        return updatedBy;
+    }
+
+    @Override
+    public void setUpdatedBy(Integer updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    @Override
+    public LocalDateTime getUpdatedOn() {
+        return updatedOn;
+    }
+
+    @Override
+    public void setUpdatedOn(LocalDateTime updatedOn) {
+        this.updatedOn = updatedOn;
     }
 
     public boolean containsIgnoreCase(String text) {
@@ -209,10 +248,14 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier impleme
         private BigDecimal minTotal;
         private BigDecimal maxTotal;
         private Set<ParameterSource> sources;
+        private Integer createdBy;
+        private LocalDateTime createdOn;
 
-        public ParameterBuilder(Integer id, String parameterTypeCode) {
+        public ParameterBuilder(Integer id, String code, Integer createdBy, LocalDateTime createdOn) {
             this.id = id;
-            this.parameterType = ParameterType.findByCode(parameterTypeCode);
+            this.parameterType = ParameterType.findByCode(code);
+            this.createdBy = createdBy;
+            this.createdOn = createdOn;
             this.sources = new HashSet<>();
         }
 
