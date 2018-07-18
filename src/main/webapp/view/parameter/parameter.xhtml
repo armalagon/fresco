@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Fresco - Parametro</title>
+        <style>
+            .forty-percent {
+                width: 40%;
+            }
+
+            .sixty-percent {
+                width: 60%;
+            }
+
+            .top-alignment {
+                vertical-align: top;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:panelGroup id="searchParameter" layout="block">
+            <h:form rendered="#{parameterBean.onSearchingMode}">
+                <h:panelGrid id="grid" columns="2" cellpadding="5" style="width: 100%" columnClasses="sixty-percent, forty-percent">
+                    <p:inputText id="txtCriteria" value="#{parameterBean.criteria}" required="true" requiredMessage="Please specify a search criteria"
+                                 placeholder="Search criteria" style="width: 100%" />
+                    <h:panelGroup>
+                        <p:commandButton id="btnSearch" value="Search" action="#{parameterBean.search}" update="searchParameter" />
+                        <p:message for="txtCriteria" style="display: inline-block;" display="text"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+
+                <p:dataTable id="dtTblResult" var="parameter" value="#{parameterBean.results}" rowKey="#{parameter.id}"
+                             paginator="true" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="10,20,30"
+                             emptyMessage="#{parameterBean.emptyMessage}">
+                    <p:column headerText="Code" sortBy="#{parameter.code}">
+                        <h:outputText value="#{parameter.code}" />
+                    </p:column>
+                    <p:column headerText="Description" sortBy="#{parameter.getMessage()}">
+                        <h:outputText value="#{parameter.getMessage()}" />
+                    </p:column>
+                    <p:column headerText="Value">
+                        <h:outputText value="#{parameter.value}" />
+                    </p:column>
+                    <p:column headerText="Unit Of Measurement" sortBy="#{parameter.unitOfMeasurement.getMessage()}">
+                        <h:outputText value="#{parameter.unitOfMeasurement.getMessage()}" />
+                    </p:column>
+                    <p:column style="width: 45px; text-align: center">
+                        <p:commandButton icon="fa fa-edit" title="Edit parameter" update="searchParameter crudParameter">
+                            <f:setPropertyActionListener value="#{parameter}" target="#{parameterBean.selected}" />
+                        </p:commandButton>
+                    </p:column>
+                    <f:facet name="paginatorBottomLeft">
+                        <p:outputLabel value="#{parameterBean.results.size()}" style="padding-left: 5px" />
+                    </f:facet>
+                </p:dataTable>
+            </h:form>
+        </h:panelGroup>
+
+        <h:panelGroup id="crudParameter" layout="block">
+            <h:form rendered="#{parameterBean.onEditionMode}">
+                <p:growl id="msgs" showDetail="true" />
+
+                <p:panel header="#{parameterBean.selected.getMessage()}">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:outputLabel value="Code:" />
+                        <p:outputLabel value="#{parameterBean.selected.code}" />
+
+                        <p:outputLabel value="Data Type:" />
+                        <p:outputLabel value="#{parameterBean.selected.dataType}" />
+
+                        <p:outputLabel for="value" value="Value:" />
+                        <p:inputText id="value" value="#{parameterBean.selected.value}" />
+
+                        <p:outputLabel value="Value Source:" />
+                        <p:outputLabel value="#{parameterBean.selected.valueSourceType.getMessage()}" />
+
+                        <p:outputLabel value="Unit Of Measurement:" />
+                        <p:outputLabel value="#{parameterBean.selected.unitOfMeasurement.getMessage()}" />
+
+                        <f:facet name="footer">
+                            <p:commandButton id="btnSave" value="Save" />
+                            <p:commandButton id="btnCancel" value="Cancel" action="#{parameterBean.cancel}" update="searchParameter crudParameter" />
+                        </f:facet>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+        </h:panelGroup>
+    </h:body>
+</html>

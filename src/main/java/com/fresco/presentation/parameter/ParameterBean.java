@@ -2,6 +2,7 @@ package com.fresco.presentation.parameter;
 
 import com.fresco.business.parameter.logic.ParameterProvider;
 import com.fresco.business.parameter.model.Parameter;
+import com.fresco.presentation.ScreenMode;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +19,23 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class ParameterView implements Serializable {
+public class ParameterBean implements Serializable {
+
+    @Inject
+    ParameterProvider provider;
 
     private String criteria;
     private List<Parameter> results;
     private Parameter selected;
 
     private String emptyMessage;
-
-    @Inject
-    ParameterProvider provider;
+    private ScreenMode mode;
 
     @PostConstruct
     public void init() {
         results = new ArrayList<>();
         emptyMessage = "&nbsp;";
+        mode = ScreenMode.SEARCH;
     }
 
     public String getCriteria() {
@@ -57,6 +60,7 @@ public class ParameterView implements Serializable {
 
     public void setSelected(Parameter selected) {
         this.selected = selected;
+        this.mode = ScreenMode.UPDATE;
     }
 
     public String getEmptyMessage() {
@@ -67,9 +71,29 @@ public class ParameterView implements Serializable {
         this.emptyMessage = emptyMessage;
     }
 
+    public ScreenMode getMode() {
+        return mode;
+    }
+
+    public void setMode(ScreenMode mode) {
+        this.mode = mode;
+    }
+
+    public boolean isOnSearchingMode() {
+        return mode == ScreenMode.SEARCH;
+    }
+
+    public boolean isOnEditionMode() {
+        return mode == ScreenMode.UPDATE;
+    }
+
     public void search() {
         emptyMessage = "No records found!";
         results = provider.findByText(criteria);
+    }
+
+    public void cancel() {
+        mode = ScreenMode.SEARCH;
     }
 
 }

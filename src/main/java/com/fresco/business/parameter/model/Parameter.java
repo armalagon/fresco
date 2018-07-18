@@ -174,7 +174,7 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier impleme
                 if (valueBasedOnType instanceof BigDecimal && !(minAmount == null && maxAmount == null)) {
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT));
                 }
-            } else if (BeanUtils.isDateType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
+            } else if (BeanUtils.isDateTimeType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
                     maxTotal == null)) {
                 errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType
                         .AMOUNT_OR_TOTAL));
