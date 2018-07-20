@@ -8,13 +8,13 @@ package com.fresco.business.config;
  */
 public class AppConfig {
 
-    private final CountrySupported country;
+    private final SupportedCountry country;
 
-    public AppConfig(CountrySupported country) {
+    public AppConfig(SupportedCountry country) {
         this.country = country;
     }
 
-    public CountrySupported getCountry() {
+    public SupportedCountry getCountry() {
         return country;
     }
 

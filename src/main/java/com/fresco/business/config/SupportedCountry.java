@@ -16,9 +16,9 @@ import java.util.Objects;
  * @version 1.0
  * @since 1.0
  */
-public class CountrySupported {
+public class SupportedCountry {
 
-    public static final CountrySupported NICARAGUA = new CountrySupported(new Locale("es", "NI"), "dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss",
+    public static final SupportedCountry NICARAGUA = new SupportedCountry(new Locale("es", "NI"), "dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss",
             "dd/MM/yyyy HH:mm:ss.SSS", "dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss.SSS");
 
     private final Locale locale;
@@ -32,7 +32,7 @@ public class CountrySupported {
     private final DateTimeFormatter formatterForTimestamp;
     private final DateTimeFormatter formatterForTimestampMillis;
 
-    private CountrySupported(final Locale locale, final String patternForDeprecatedDate, final String patternForDeprecatedTimestamp,
+    private SupportedCountry(final Locale locale, final String patternForDeprecatedDate, final String patternForDeprecatedTimestamp,
             final String patternForDeprecatedTimestampMillis, final String patternForDate, final String patternForTimestamp,
             final String patternForTimestampMillis) {
         this.locale = locale;
@@ -51,10 +51,11 @@ public class CountrySupported {
         return locale;
     }
 
-    public CountrySupported changeLanguage(Locale language) {
+    public SupportedCountry changeLanguage(Locale language) {
         Objects.requireNonNull(language, "language");
-        return new CountrySupported(new Locale(language.getLanguage(), locale.getCountry()), patternForDeprecatedDate, patternForDeprecatedTimestamp,
-                patternForDeprecatedTimestampMillis, patternForDate, patternForTimestamp, patternForTimestampMillis);
+        return new SupportedCountry(new Locale(language.getLanguage(), locale.getCountry()), patternForDeprecatedDate,
+                patternForDeprecatedTimestamp, patternForDeprecatedTimestampMillis, patternForDate, patternForTimestamp,
+                patternForTimestampMillis);
     }
 
     public String getPatternForDeprecatedDate() {
