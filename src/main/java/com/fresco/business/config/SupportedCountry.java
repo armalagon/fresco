@@ -91,27 +91,27 @@ public class SupportedCountry {
     }
 
     public String formatAsDate(Date date) {
-        return FormatUtils.dateFormat(date, patternForDeprecatedDate, locale);
+        return FormatUtils.formatDate(date, patternForDeprecatedDate, locale);
     }
 
     public String formatAsTimestamp(Date date) {
-        return FormatUtils.dateFormat(date, patternForDeprecatedTimestamp, locale);
+        return FormatUtils.formatDate(date, patternForDeprecatedTimestamp, locale);
     }
 
     public String formatAsTimestampMillis(Date date) {
-        return FormatUtils.dateFormat(date, patternForDeprecatedTimestampMillis, locale);
+        return FormatUtils.formatDate(date, patternForDeprecatedTimestampMillis, locale);
     }
 
     public String formatAsDate(LocalDate date) {
-        return FormatUtils.dateFormat(date, formatterForDate, locale);
+        return Objects.requireNonNull(date, "date").format(formatterForDate);
     }
 
     public String formatAsTimestamp(LocalDateTime date) {
-        return FormatUtils.dateFormat(date, formatterForTimestamp, locale);
+        return Objects.requireNonNull(date, "date").format(formatterForTimestamp);
     }
 
     public String formatAsTimestampMillis(LocalDateTime date) {
-        return FormatUtils.dateFormat(date, formatterForTimestampMillis, locale);
+        return Objects.requireNonNull(date, "date").format(formatterForTimestampMillis);
     }
 
 }
