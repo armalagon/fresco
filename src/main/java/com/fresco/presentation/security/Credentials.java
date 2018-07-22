@@ -1,7 +1,6 @@
 package com.fresco.presentation.security;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
+import javax.enterprise.inject.Model;
 
 /**
  *
@@ -9,8 +8,7 @@ import javax.inject.Named;
  * @version 1.0
  * @since 1.0
  */
-@Named
-@RequestScoped
+@Model
 public class Credentials {
 
     private String username;
@@ -34,6 +32,6 @@ public class Credentials {
 
     @Override
     public String toString() {
-        return "Credentials{" + "username=" + username + ", password=" + password + '}';
+        return "Credentials{" + "username=" + username + '}';
     }
 }
