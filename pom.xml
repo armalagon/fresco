@@ -22,6 +22,7 @@
 
         <!-- Third party dependencies -->
         <primefaces.version>6.2</primefaces.version>
+        <omnifaces.version>2.6.9</omnifaces.version>
         <jooq.version>3.11.0</jooq.version>
         <postgresql.version>42.2.2</postgresql.version>
         <zacate.version>1.0-SNAPSHOT</zacate.version>
@@ -52,6 +53,11 @@
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>${primefaces.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces</artifactId>
+            <version>${omnifaces.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
