@@ -1,2 +1,5 @@
-nb-configuration.xml
+# Maven
 target/
+# Netbeans
+faces-config.NavData
+nb-configuration.xml
