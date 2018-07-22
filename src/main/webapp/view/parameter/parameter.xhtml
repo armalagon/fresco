@@ -24,15 +24,14 @@
         <h:panelGroup id="searchParameter" layout="block">
             <h:form rendered="#{parameterBean.onSearchingMode}">
                 <h:panelGrid id="grid" columns="2" cellpadding="5" style="width: 100%" columnClasses="sixty-percent, forty-percent">
-                    <p:inputText id="txtCriteria" value="#{parameterBean.criteria}" required="true" requiredMessage="Please specify a search criteria"
-                                 placeholder="Search criteria" style="width: 100%" />
-                    <h:panelGroup>
-                        <p:commandButton id="btnSearch" value="Search" action="#{parameterBean.search}" update="searchParameter" />
-                        <p:message for="txtCriteria" style="display: inline-block;" display="text"/>
-                    </h:panelGroup>
+                    <p:message for="criteria" />
+                    <h:panelGroup />
+
+                    <p:inputText id="criteria" value="#{parameterBean.criteria}" placeholder="Search criteria" style="width: 100%" />
+                    <p:commandButton value="Search" action="#{parameterBean.search}" update="searchParameter" />
                 </h:panelGrid>
 
-                <p:dataTable id="dtTblResult" var="parameter" value="#{parameterBean.results}" rowKey="#{parameter.id}"
+                <p:dataTable var="parameter" value="#{parameterBean.results}" rowKey="#{parameter.id}"
                              paginator="true" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="10,20,30"
                              emptyMessage="#{parameterBean.emptyMessage}">
                     <p:column headerText="Code" sortBy="#{parameter.code}">
@@ -61,7 +60,7 @@
 
         <h:panelGroup id="crudParameter" layout="block">
             <h:form rendered="#{parameterBean.onEditionMode}">
-                <p:growl id="msgs" showDetail="true" />
+                <p:messages id="msgs" closable="true" />
 
                 <p:panel header="#{parameterBean.selected.getMessage()}">
                     <h:panelGrid columns="2" cellpadding="10">
@@ -72,7 +71,7 @@
                         <p:outputLabel value="#{parameterBean.selected.dataType}" />
 
                         <p:outputLabel for="value" value="Value:" />
-                        <p:inputText id="value" value="#{parameterBean.selected.value}" />
+                        <p:inputTextarea id="value" value="#{parameterBean.selected.value}" maxlength="400" style="width: 100%" />
 
                         <p:outputLabel value="Value Source:" />
                         <p:outputLabel value="#{parameterBean.selected.valueSourceType.getMessage()}" />
@@ -80,9 +79,21 @@
                         <p:outputLabel value="Unit Of Measurement:" />
                         <p:outputLabel value="#{parameterBean.selected.unitOfMeasurement.getMessage()}" />
 
+                        <p:outputLabel value="Created By:" />
+                        <p:outputLabel value="#{parameterBean.selected.createdBy}" />
+
+                        <p:outputLabel value="Created On:" />
+                        <p:outputLabel value="#{parameterBean.selected.createdOn}" />
+
+                        <p:outputLabel value="Updated By:" />
+                        <p:outputLabel value="#{parameterBean.selected.updatedBy}" />
+
+                        <p:outputLabel value="Updated On:" />
+                        <p:outputLabel value="#{parameterBean.selected.updatedOn}" />
+
                         <f:facet name="footer">
-                            <p:commandButton id="btnSave" value="Save" />
-                            <p:commandButton id="btnCancel" value="Cancel" immediate="true" action="#{parameterBean.cancel}" update="searchParameter crudParameter" />
+                            <p:commandButton value="Save"  />
+                            <p:commandButton value="Cancel" immediate="true" action="#{parameterBean.cancel}" update="searchParameter crudParameter" />
                         </f:facet>
                     </h:panelGrid>
                 </p:panel>

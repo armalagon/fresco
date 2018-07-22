@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -24,7 +25,9 @@ public class ParameterBean implements Serializable {
     @Inject
     ParameterProvider provider;
 
+    @NotNull(message = "Please specify a search criteria")
     private String criteria;
+
     private List<Parameter> results;
     private Parameter selected;
 
