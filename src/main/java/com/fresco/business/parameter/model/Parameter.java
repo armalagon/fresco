@@ -206,14 +206,14 @@ public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier impleme
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.DATE));
                 }
 
-                if (BeanUtils.isIntegerType(valueBasedOnType) && !(minTotal == null && maxTotal == null)) {
+                if (BeanUtils.isSomeIntegerType(valueBasedOnType) && !(minTotal == null && maxTotal == null)) {
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.TOTAL));
                 }
 
                 if (valueBasedOnType instanceof BigDecimal && !(minAmount == null && maxAmount == null)) {
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT));
                 }
-            } else if (BeanUtils.isDateTimeType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
+            } else if (BeanUtils.isSomeDateTimeType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
                     maxTotal == null)) {
                 errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType
                         .AMOUNT_OR_TOTAL));
