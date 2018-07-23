@@ -7,14 +7,14 @@ insert into security.application_user (
     , fullname
     , password
     , is_super_user
-	, created_by)
+    , created_by)
 values (
-	'fresco'
-	, 'Fresco'
-	, 'Fresco2018!'
-	, true
-	, 1
-	);
+    'fresco'
+    , 'Fresco'
+    , 'Fresco2018!'
+    , true
+    , 1
+    );
 
 
 -- ================================================================================
