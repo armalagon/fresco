@@ -27,7 +27,7 @@
                     <p:message for="criteria" />
                     <h:panelGroup />
 
-                    <p:inputText id="criteria" value="#{parameterBean.criteria}" placeholder="Search criteria" style="width: 100%" />
+                    <p:inputText id="criteria" value="#{parameterBean.criteria}" maxlength="100" placeholder="Search criteria" style="width: 100%" />
                     <p:commandButton value="Search" action="#{parameterBean.search}" update="searchParameter" />
                 </h:panelGrid>
 
@@ -47,7 +47,7 @@
                         <h:outputText value="#{parameter.unitOfMeasurement.getMessage()}" />
                     </p:column>
                     <p:column style="width: 45px; text-align: center">
-                        <p:commandButton icon="fa fa-edit" title="Edit parameter" update="searchParameter crudParameter">
+                        <p:commandButton icon="fa fa-edit" action="#{parameterBean.edit}" update="searchParameter crudParameter" title="Edit parameter">
                             <f:setPropertyActionListener value="#{parameter}" target="#{parameterBean.selected}" />
                         </p:commandButton>
                     </p:column>
@@ -80,16 +80,16 @@
                         <p:outputLabel value="#{parameterBean.selected.unitOfMeasurement.getMessage()}" />
 
                         <p:outputLabel value="Created By:" />
-                        <p:outputLabel value="#{parameterBean.selected.createdBy}" />
+                        <p:outputLabel value="#{creation.user.code} - #{creation.user.fullname}" />
 
                         <p:outputLabel value="Created On:" />
-                        <p:outputLabel value="#{parameterBean.selected.createdOn}" />
+                        <p:outputLabel value="#{creation.auditTime}" />
 
                         <p:outputLabel value="Updated By:" />
-                        <p:outputLabel value="#{parameterBean.selected.updatedBy}" />
+                        <p:outputLabel value="#{modification.user.code} - #{modification.user.fullname}" />
 
                         <p:outputLabel value="Updated On:" />
-                        <p:outputLabel value="#{parameterBean.selected.updatedOn}" />
+                        <p:outputLabel value="#{modification.auditTime}" />
 
                         <f:facet name="footer">
                             <p:commandButton value="Save"  />

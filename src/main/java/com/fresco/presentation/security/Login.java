@@ -24,7 +24,7 @@ public class Login implements Serializable {
 
     public void login() {
         if ("fresco".equals(credentials.getUsername()) && "fresco123".equals(credentials.getPassword())) {
-            user = User.of(credentials.getUsername(), credentials.getPassword());
+            user = new User(credentials.getUsername());
         } else {
 
         }

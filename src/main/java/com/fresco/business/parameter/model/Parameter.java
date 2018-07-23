@@ -9,7 +9,7 @@ import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.zacate.bean.BeanUtils;
 import com.zacate.conversion.DefaultDatatypeConverter;
 import com.zacate.i18n.Localized;
-import com.zacate.identifier.IntegerReadOnlyAndStringNaturalIdentifier;
+import com.zacate.identifier.ReadOnlyIntegerAndStringNaturalIdentifier;
 import com.zacate.jdbc.JDBCUtils;
 import com.zacate.util.ErrorCollector;
 import com.zacate.util.SimpleTextSearch;
@@ -27,7 +27,7 @@ import java.util.Set;
  * @version 1.0
  * @since 1.0
  */
-public class Parameter extends IntegerReadOnlyAndStringNaturalIdentifier implements Localized, GetterInsertable, Updatable {
+public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier implements Localized, GetterInsertable, Updatable {
 
     private final ParameterType parameterType;
     private final String dataType;

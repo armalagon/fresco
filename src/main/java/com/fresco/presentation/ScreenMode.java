@@ -8,6 +8,6 @@ package com.fresco.presentation;
  */
 public enum ScreenMode {
 
-    SEARCH, UPDATE
+    SEARCH, EDIT
 
 }

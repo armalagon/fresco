@@ -6,6 +6,6 @@ package com.fresco.business.general.model;
  * @version 1.0
  * @since 1.0
  */
-public interface Auditable extends Insertable, Updatable {
+public interface Insertable extends GetterInsertable, SetterInsertable {
 
 }

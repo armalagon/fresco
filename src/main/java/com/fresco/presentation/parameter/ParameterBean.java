@@ -3,14 +3,19 @@ package com.fresco.presentation.parameter;
 import com.fresco.business.parameter.logic.ParameterProvider;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.presentation.ScreenMode;
+import com.fresco.presentation.security.AuditEvent;
+import com.fresco.presentation.security.Created;
+import com.fresco.presentation.security.Updated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -25,7 +30,16 @@ public class ParameterBean implements Serializable {
     @Inject
     ParameterProvider provider;
 
+    @Inject
+    @Created
+    Event<AuditEvent> creationEvent;
+
+    @Inject
+    @Updated
+    Event<AuditEvent> modificationEvent;
+
     @NotNull(message = "Please specify a search criteria")
+    @Size(max = 100)
     private String criteria;
 
     private List<Parameter> results;
@@ -63,7 +77,6 @@ public class ParameterBean implements Serializable {
 
     public void setSelected(Parameter selected) {
         this.selected = selected;
-        this.mode = ScreenMode.UPDATE;
     }
 
     public String getEmptyMessage() {
@@ -87,12 +100,24 @@ public class ParameterBean implements Serializable {
     }
 
     public boolean isOnEditionMode() {
-        return mode == ScreenMode.UPDATE;
+        return mode == ScreenMode.EDIT;
     }
 
     public void search() {
         emptyMessage = "No records found!";
         results = provider.findByText(criteria);
+    }
+
+    public void edit() {
+        mode = ScreenMode.EDIT;
+
+        // ---------------------------------------------------------------------------------------------------------------------------------
+        // Fire events to get related data
+        creationEvent.fire(new AuditEvent(selected.getCreatedBy(), selected.getCreatedOn()));
+
+        if (selected.getUpdatedBy() != null) {
+            modificationEvent.fire(new AuditEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
+        }
     }
 
     public void cancel() {
