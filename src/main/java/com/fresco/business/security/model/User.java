@@ -46,9 +46,6 @@ public class User extends WriteableIntegerAndStringNaturalIdentifier implements 
     private Integer updatedBy;
     private LocalDateTime updatedOn;
 
-    public User() {
-    }
-
     public User(Integer id, String login) {
         super(id);
         this.login = login;

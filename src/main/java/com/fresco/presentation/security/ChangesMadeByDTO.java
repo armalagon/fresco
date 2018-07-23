@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * @version 1.0
  * @since 1.0
  */
-public class ChangesMadeByDTO {
+public final class ChangesMadeByDTO {
 
     private User user;
     private LocalDateTime auditTime;

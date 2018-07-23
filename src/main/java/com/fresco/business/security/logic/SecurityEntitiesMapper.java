@@ -13,7 +13,7 @@ import org.jooq.Record;
  * @version 1.0
  * @since 1.0
  */
-public class SecurityEntitiesMapper {
+public abstract class SecurityEntitiesMapper {
 
     protected static final String CREATED_BY = "created_by";
     protected static final String CREATED_ON = "created_on";

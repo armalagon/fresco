@@ -35,6 +35,7 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
     private final ValueSourceType valueSourceType;
     private final UnitOfMeasurement unitOfMeasurement;
     private final BusinessProcessType businessProcessType;
+    private final boolean reserved;
     private final Long minAmount;
     private final Long maxAmount;
     private final LocalDate minDate;
@@ -55,6 +56,7 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
         this.valueSourceType = builder.valueSourceType;
         this.unitOfMeasurement = builder.unitOfMeasurement;
         this.businessProcessType = builder.businessProcessType;
+        this.reserved = builder.reserved;
         this.minAmount = builder.minAmount;
         this.maxAmount = builder.maxAmount;
         this.minDate = builder.minDate;
@@ -106,6 +108,10 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
 
     public BusinessProcessType getBusinessProcessType() {
         return businessProcessType;
+    }
+
+    public boolean isReserved() {
+        return reserved;
     }
 
     public Long getMinAmount() {
@@ -241,6 +247,7 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
         private ValueSourceType valueSourceType;
         private UnitOfMeasurement unitOfMeasurement;
         private BusinessProcessType businessProcessType;
+        private boolean reserved;
         private Long minAmount;
         private Long maxAmount;
         private LocalDate minDate;
@@ -281,6 +288,11 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
 
         public ParameterBuilder businessProcessType(String code) {
             this.businessProcessType = BusinessProcessType.findByCode(code);
+            return this;
+        }
+
+        public ParameterBuilder reserved(boolean reserved) {
+            this.reserved = reserved;
             return this;
         }
 

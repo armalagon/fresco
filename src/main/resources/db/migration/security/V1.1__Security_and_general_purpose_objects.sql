@@ -105,6 +105,7 @@ create table parameter (
     , value_source_type_enum character varying(15) not null -- simple value, model (table or enum)
 	, unit_of_measurement_enum character varying(15) not null
     , business_process_type_enum character varying(15) not null
+	, is_reserved boolean not null default false
 	, created_by integer not null
 	, created_on timestamp(3) without time zone not null default now()
 	, updated_by integer

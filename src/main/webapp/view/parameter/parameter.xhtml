@@ -23,13 +23,13 @@
     <h:body>
         <h:panelGroup id="searchParameter" layout="block">
             <h:form rendered="#{parameterBean.onSearchingMode}">
-                <h:panelGrid id="grid" columns="2" cellpadding="5" style="width: 100%" columnClasses="sixty-percent, forty-percent">
-                    <p:message for="criteria" />
-                    <h:panelGroup />
+                <p:growl id="msgs" />
 
+                <div class="ui-inputgroup">
                     <p:inputText id="criteria" value="#{parameterBean.criteria}" maxlength="100" placeholder="Search criteria" style="width: 100%" />
-                    <p:commandButton value="Search" action="#{parameterBean.search}" update="searchParameter" />
-                </h:panelGrid>
+                    <p:commandButton action="#{parameterBean.search}" update="searchParameter" icon="fa fa-search" styleClass="white-button"/>
+                </div>
+                <br />
 
                 <p:dataTable var="parameter" value="#{parameterBean.results}" rowKey="#{parameter.id}"
                              paginator="true" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="10,20,30"
@@ -65,31 +65,31 @@
                 <p:panel header="#{parameterBean.selected.getMessage()}">
                     <h:panelGrid columns="2" cellpadding="10">
                         <p:outputLabel value="Code:" />
-                        <p:outputLabel value="#{parameterBean.selected.code}" />
+                        <h:outputText value="#{parameterBean.selected.code}" />
 
                         <p:outputLabel value="Data Type:" />
-                        <p:outputLabel value="#{parameterBean.selected.dataType}" />
+                        <h:outputText value="#{parameterBean.selected.dataType}" />
 
                         <p:outputLabel for="value" value="Value:" />
                         <p:inputTextarea id="value" value="#{parameterBean.selected.value}" maxlength="400" style="width: 100%" />
 
                         <p:outputLabel value="Value Source:" />
-                        <p:outputLabel value="#{parameterBean.selected.valueSourceType.getMessage()}" />
+                        <h:outputText value="#{parameterBean.selected.valueSourceType.getMessage()}" />
 
                         <p:outputLabel value="Unit Of Measurement:" />
-                        <p:outputLabel value="#{parameterBean.selected.unitOfMeasurement.getMessage()}" />
+                        <h:outputText value="#{parameterBean.selected.unitOfMeasurement.getMessage()}" />
 
                         <p:outputLabel value="Created By:" />
-                        <p:outputLabel value="#{creation.user.code} - #{creation.user.fullname}" />
+                        <h:outputText value="#{creation.user.code} - #{creation.user.fullname}" />
 
                         <p:outputLabel value="Created On:" />
-                        <p:outputLabel value="#{creation.auditTime}" />
+                        <h:outputText value="#{creation.auditTime}" />
 
                         <p:outputLabel value="Updated By:" />
-                        <p:outputLabel value="#{modification.user.code} - #{modification.user.fullname}" />
+                        <h:outputText value="#{modification.user.code} - #{modification.user.fullname}" />
 
                         <p:outputLabel value="Updated On:" />
-                        <p:outputLabel value="#{modification.auditTime}" />
+                        <h:outputText value="#{modification.auditTime}" />
 
                         <f:facet name="footer">
                             <p:commandButton value="Save"  />

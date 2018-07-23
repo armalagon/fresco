@@ -4,9 +4,9 @@ import com.fresco.business.security.logic.SecurityProvider;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  *
@@ -22,14 +22,12 @@ public class UserLookup {
 
     @Produces
     @Created
-    @RequestScoped
-    @Named
+    @Model
     ChangesMadeByDTO creation;
 
     @Produces
     @Updated
-    @RequestScoped
-    @Named
+    @Model
     ChangesMadeByDTO modification;
 
     @PostConstruct

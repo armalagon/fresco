@@ -61,6 +61,7 @@ public class ParameterProvider {
                 PARAMETER.VALUE_SOURCE_TYPE_ENUM,
                 PARAMETER.UNIT_OF_MEASUREMENT_ENUM,
                 PARAMETER.BUSINESS_PROCESS_TYPE_ENUM,
+                PARAMETER.IS_RESERVED,
                 PARAMETER.CREATED_BY,
                 PARAMETER.CREATED_ON,
                 PARAMETER_CONSTRAINT.MIN_AMOUNT,
@@ -81,6 +82,7 @@ public class ParameterProvider {
                         .valueSourceType(record.get(PARAMETER.VALUE_SOURCE_TYPE_ENUM))
                         .unitOfMeasurement(record.get(PARAMETER.UNIT_OF_MEASUREMENT_ENUM))
                         .businessProcessType(record.get(PARAMETER.BUSINESS_PROCESS_TYPE_ENUM))
+                        .reserved(record.get(PARAMETER.IS_RESERVED))
                         .minAmount(record.get(PARAMETER_CONSTRAINT.MIN_AMOUNT))
                         .maxAmount(record.get(PARAMETER_CONSTRAINT.MAX_AMOUNT))
                         .minDate(record.get(PARAMETER_CONSTRAINT.MIN_DATE))
@@ -103,6 +105,7 @@ public class ParameterProvider {
 
     public List<Parameter> findByText(String value) {
         return parameters.values().parallelStream()
+                .filter(p -> p.isReserved() == false)
                 .filter(p -> p.containsIgnoreCase(value))
                 .collect(Collectors.toList());
     }

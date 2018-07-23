@@ -111,7 +111,7 @@ public class ParameterBean implements Serializable {
     public void edit() {
         mode = ScreenMode.EDIT;
 
-        // ---------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------
         // Fire events to get related data
         creationEvent.fire(new AuditEvent(selected.getCreatedBy(), selected.getCreatedOn()));
 
