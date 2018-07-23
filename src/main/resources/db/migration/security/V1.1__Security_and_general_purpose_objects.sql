@@ -9,7 +9,7 @@ set search_path to security;
 create table application_user (
     id serial not null
     , login character varying(15) not null
-    , fullname character varying(40) not null
+    , fullname character varying(80) not null
     , email character varying(15)
     , password character varying(200) not null
     , failed_login_attempts smallint not null default 0 -- reset this value every 15 minutes
