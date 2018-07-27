@@ -15,18 +15,16 @@ import org.jooq.Record;
  */
 public abstract class SecurityEntitiesMapper {
 
-    protected static final String CREATED_BY = "created_by";
-    protected static final String CREATED_ON = "created_on";
-    protected static final String UPDATED_BY = "updated_by";
-    protected static final String UPDATED_ON = "updated_on";
+    protected static final String FIELD_CREATED_BY = "created_by";
+    protected static final String FIELD_CREATED_ON = "created_on";
+    protected static final String FIELD_UPDATED_BY = "updated_by";
+    protected static final String FIELD_UPDATED_ON = "updated_on";
 
     public static void mapSecurityAttrInto(final Auditable auditable, final Record record) {
-        Objects.requireNonNull(auditable, "auditable");
-        Objects.requireNonNull(record, "record");
-        auditable.setCreatedBy(record.get(CREATED_BY, Integer.class));
-        auditable.setCreatedOn(record.get(CREATED_ON, LocalDateTime.class));
-        auditable.setUpdatedBy(record.get(UPDATED_BY, Integer.class));
-        auditable.setUpdatedOn(record.get(UPDATED_ON, LocalDateTime.class));
+        auditable.setCreatedBy(record.get(FIELD_CREATED_BY, Integer.class));
+        auditable.setCreatedOn(record.get(FIELD_CREATED_ON, LocalDateTime.class));
+        auditable.setUpdatedBy(record.get(FIELD_UPDATED_BY, Integer.class));
+        auditable.setUpdatedOn(record.get(FIELD_UPDATED_ON, LocalDateTime.class));
     }
 
     public static User mapUserFrom(final Record record) {

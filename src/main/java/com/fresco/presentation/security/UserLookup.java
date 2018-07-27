@@ -1,5 +1,6 @@
 package com.fresco.presentation.security;
 
+import com.fresco.business.security.dto.ChangesMadeByDTO;
 import com.fresco.business.security.logic.SecurityProvider;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -36,12 +37,12 @@ public class UserLookup {
         modification = new ChangesMadeByDTO();
     }
 
-    public void creation(@Observes @Created AuditEvent event) {
-        creation =  new ChangesMadeByDTO(security.findUserById(event.getUserId()), event.getAuditTime());
+    public void creation(@Observes @Created ChangesMadeByEvent event) {
+        creation = new ChangesMadeByDTO(security.findUserById(event.getId()), event.getEventTime());
     }
 
-    public void modification(@Observes @Updated AuditEvent event) {
-        modification =  new ChangesMadeByDTO(security.findUserById(event.getUserId()), event.getAuditTime());
+    public void modification(@Observes @Updated ChangesMadeByEvent event) {
+        modification = new ChangesMadeByDTO(security.findUserById(event.getId()), event.getEventTime());
     }
 
 }

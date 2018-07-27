@@ -1,4 +1,4 @@
-package com.fresco.presentation.security;
+package com.fresco.business.security.dto;
 
 import com.fresco.business.security.model.User;
 import java.time.LocalDateTime;
@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 public final class ChangesMadeByDTO {
 
     private User user;
-    private LocalDateTime auditTime;
+    private LocalDateTime eventTime;
 
     public ChangesMadeByDTO() {
     }
 
-    public ChangesMadeByDTO(User user, LocalDateTime auditTime) {
+    public ChangesMadeByDTO(User user, LocalDateTime eventTime) {
         this.user = user;
-        this.auditTime = auditTime;
+        this.eventTime = eventTime;
     }
 
     public User getUser() {
@@ -30,17 +30,17 @@ public final class ChangesMadeByDTO {
         this.user = user;
     }
 
-    public LocalDateTime getAuditTime() {
-        return auditTime;
+    public LocalDateTime getEventTime() {
+        return eventTime;
     }
 
-    public void setAuditTime(LocalDateTime auditTime) {
-        this.auditTime = auditTime;
+    public void setEventTime(LocalDateTime eventTime) {
+        this.eventTime = eventTime;
     }
 
     @Override
     public String toString() {
-        return "ChangesMadeByDTO{" + "user=" + user + ", auditTime=" + auditTime + '}';
+        return "ChangesMadeByDTO{" + "user=" + user + ", eventTime=" + eventTime + '}';
     }
 
 }

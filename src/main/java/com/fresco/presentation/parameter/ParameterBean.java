@@ -3,7 +3,7 @@ package com.fresco.presentation.parameter;
 import com.fresco.business.parameter.logic.ParameterProvider;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.presentation.ScreenMode;
-import com.fresco.presentation.security.AuditEvent;
+import com.fresco.presentation.security.ChangesMadeByEvent;
 import com.fresco.presentation.security.Created;
 import com.fresco.presentation.security.Updated;
 import java.io.Serializable;
@@ -32,11 +32,11 @@ public class ParameterBean implements Serializable {
 
     @Inject
     @Created
-    Event<AuditEvent> creationEvent;
+    Event<ChangesMadeByEvent> creationEvent;
 
     @Inject
     @Updated
-    Event<AuditEvent> modificationEvent;
+    Event<ChangesMadeByEvent> modificationEvent;
 
     @NotNull(message = "Please specify a search criteria")
     @Size(max = 100)
@@ -113,10 +113,10 @@ public class ParameterBean implements Serializable {
 
         // -------------------------------------------------------------------------------------------------
         // Fire events to get related data
-        creationEvent.fire(new AuditEvent(selected.getCreatedBy(), selected.getCreatedOn()));
+        creationEvent.fire(new ChangesMadeByEvent(selected.getCreatedBy(), selected.getCreatedOn()));
 
         if (selected.getUpdatedBy() != null) {
-            modificationEvent.fire(new AuditEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
+            modificationEvent.fire(new ChangesMadeByEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
         }
     }
 

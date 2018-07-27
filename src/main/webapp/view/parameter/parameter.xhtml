@@ -83,13 +83,13 @@
                         <h:outputText value="#{creation.user.code} - #{creation.user.fullname}" />
 
                         <p:outputLabel value="Created On:" />
-                        <h:outputText value="#{creation.auditTime}" />
+                        <h:outputText value="#{creation.eventTime}" />
 
                         <p:outputLabel value="Updated By:" />
                         <h:outputText value="#{modification.user.code} - #{modification.user.fullname}" />
 
                         <p:outputLabel value="Updated On:" />
-                        <h:outputText value="#{modification.auditTime}" />
+                        <h:outputText value="#{modification.eventTime}" />
 
                         <f:facet name="footer">
                             <p:commandButton value="Save"  />
