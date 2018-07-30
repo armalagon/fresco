@@ -6,15 +6,17 @@ import com.fresco.business.general.model.Updatable;
 import com.fresco.business.parameter.exception.AllConstraintsConfigured;
 import com.fresco.business.parameter.exception.NoConfigurationRequired;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
+import com.fresco.business.parameter.exception.WrongValue;
 import com.zacate.bean.BeanUtils;
+import com.zacate.bean.ReflectionException;
 import com.zacate.conversion.DefaultDatatypeConverter;
 import com.zacate.i18n.Localized;
 import com.zacate.identifier.ReadOnlyIntegerAndStringNaturalIdentifier;
-import com.zacate.jdbc.JDBCUtils;
+import com.zacate.util.Arguments;
 import com.zacate.util.ErrorCollector;
+import com.zacate.util.NumberUtils;
 import com.zacate.util.SimpleTextSearch;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,8 +40,6 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
     private final boolean reserved;
     private final Long minAmount;
     private final Long maxAmount;
-    private final LocalDate minDate;
-    private final LocalDate maxDate;
     private final BigDecimal minTotal;
     private final BigDecimal maxTotal;
     private final Set<ParameterSource> sources;
@@ -59,8 +59,6 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
         this.reserved = builder.reserved;
         this.minAmount = builder.minAmount;
         this.maxAmount = builder.maxAmount;
-        this.minDate = builder.minDate;
-        this.maxDate = builder.maxDate;
         this.minTotal = builder.minTotal;
         this.maxTotal = builder.maxTotal;
         this.sources = builder.sources;
@@ -90,12 +88,8 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Object convertValue() throws ClassNotFoundException {
-        return DefaultDatatypeConverter.getInstance().getValue(value, Class.forName(dataType));
+    public Object convertValue(String newValue) throws ClassNotFoundException {
+        return DefaultDatatypeConverter.getInstance().getValue(newValue, Class.forName(dataType));
     }
 
     public ValueSourceType getValueSourceType() {
@@ -120,14 +114,6 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
 
     public Long getMaxAmount() {
         return maxAmount;
-    }
-
-    public LocalDate getMinDate() {
-        return minDate;
-    }
-
-    public LocalDate getMaxDate() {
-        return maxDate;
     }
 
     public BigDecimal getMinTotal() {
@@ -180,53 +166,64 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
                 .contains();
     }
 
-    public List<String> validate() {
-        if (minAmount == null && maxAmount == null && minDate == null && maxDate == null && minTotal == null && maxTotal == null) {
+    public List<String> doValidateAndUpdate(String newValue) {
+        if (Arguments.isEmpty(minAmount, maxAmount, minTotal, maxTotal)) {
+            value = newValue;
             return Collections.emptyList();
         }
 
         ErrorCollector errors = new ErrorCollector();
 
-        boolean atLeastOneIsConfigured = !(minAmount == null && maxAmount == null && minDate == null && maxDate == null &&
-                minTotal == null && maxTotal == null);
+        boolean atLeastOneIsConfigured = Arguments.isNotEmpty(minAmount, maxAmount, minTotal, maxTotal);
 
         if (!ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
             errors.add(new NoConfigurationRequired(getCode()));
         }
 
-        if (minAmount != null && maxAmount != null && minDate != null && maxDate != null && minTotal != null && maxTotal != null) {
+        // TODO Create a new method for this validation
+        if (minAmount != null && maxAmount != null && minTotal != null && maxTotal != null) {
             errors.add(new AllConstraintsConfigured(getCode()));
         }
 
         if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
             Object valueBasedOnType;
             try {
-                valueBasedOnType = convertValue();
-            } catch (ClassNotFoundException ex) {
+                valueBasedOnType = convertValue(newValue);
+            } catch (ClassNotFoundException | IllegalArgumentException | UnsupportedOperationException | ReflectionException ex) {
                 errors.add(ex);
                 return errors.getMessages();
             }
 
-            if (valueBasedOnType instanceof Number) {
-                if (!(minDate == null && maxDate == null)) {
-                    errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.DATE));
-                }
-
-                if (BeanUtils.isSomeIntegerType(valueBasedOnType) && !(minTotal == null && maxTotal == null)) {
+            if (BeanUtils.isSomeIntegerType(valueBasedOnType)) {
+                if (Arguments.isNotEmpty(minTotal, maxTotal)) {
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.TOTAL));
                 }
 
-                if (valueBasedOnType instanceof BigDecimal && !(minAmount == null && maxAmount == null)) {
+                if (Arguments.isNotEmpty(minAmount, maxAmount)) {
+                    Long _value = ((Number) valueBasedOnType).longValue();
+
+                    if (NumberUtils.isOutOfBoundaries(_value, minAmount, maxAmount)) {
+                        errors.add(new WrongValue(newValue, minAmount, maxAmount));
+                    }
+                }
+            } else if (valueBasedOnType instanceof BigDecimal) {
+                if (Arguments.isNotEmpty(minAmount, maxAmount)) {
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.AMOUNT));
                 }
-            } else if (BeanUtils.isSomeDateTimeType(valueBasedOnType) && !(minAmount == null && maxAmount == null && minTotal == null &&
-                    maxTotal == null)) {
-                errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType
-                        .AMOUNT_OR_TOTAL));
+
+                if (Arguments.isNotEmpty(minTotal, maxTotal)) {
+                    if (NumberUtils.isOutOfBoundaries((BigDecimal) valueBasedOnType, minTotal, maxTotal)) {
+                        errors.add(new WrongValue(newValue, minTotal, maxTotal));
+                    }
+                }
             } else {
                 // Boolean, String, etc...
                 errors.add(new NoConfigurationRequired(getCode(), dataType));
             }
+        }
+
+        if (errors.isEmpty()) {
+            value = newValue;
         }
 
         return errors.getMessages();
@@ -250,8 +247,6 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
         private boolean reserved;
         private Long minAmount;
         private Long maxAmount;
-        private LocalDate minDate;
-        private LocalDate maxDate;
         private BigDecimal minTotal;
         private BigDecimal maxTotal;
         private Set<ParameterSource> sources;
@@ -303,26 +298,6 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
 
         public ParameterBuilder maxAmount(Long maxAmount) {
             this.maxAmount = maxAmount;
-            return this;
-        }
-
-        public ParameterBuilder minDate(LocalDate minDate) {
-            this.minDate = minDate;
-            return this;
-        }
-
-        public ParameterBuilder minDate(java.sql.Date minDate) {
-            this.minDate = JDBCUtils.toLocalDate(minDate);
-            return this;
-        }
-
-        public ParameterBuilder maxDate(LocalDate maxDate) {
-            this.maxDate = minDate;
-            return this;
-        }
-
-        public ParameterBuilder maxDate(java.sql.Date maxDate) {
-            this.maxDate = JDBCUtils.toLocalDate(maxDate);
             return this;
         }
 

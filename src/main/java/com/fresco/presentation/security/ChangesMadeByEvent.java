@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * @version 1.0
  * @since 1.0
  */
-public class ChangesMadeByEvent {
+public final class ChangesMadeByEvent {
 
     private Integer id;
     private LocalDateTime eventTime;

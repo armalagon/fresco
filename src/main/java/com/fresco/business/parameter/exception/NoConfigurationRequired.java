@@ -8,8 +8,8 @@ package com.fresco.business.parameter.exception;
  */
 public class NoConfigurationRequired extends WrongParameterConfiguration {
 
-    protected static final String ERROR_FOR_NO_CONSTRAINTS_ALLOWED = "noConstraintsAllowed";
-    protected static final String ERROR_FOR_NO_CONFIGURATION_REQUIRED = "noConfigurationRequired";
+    private static final String ERROR_FOR_NO_CONSTRAINTS_ALLOWED = "noConstraintsAllowed";
+    private static final String ERROR_FOR_NO_CONFIGURATION_REQUIRED = "noConfigurationRequired";
 
     public NoConfigurationRequired(String parameterCode) {
         super(ERROR_FOR_NO_CONSTRAINTS_ALLOWED, parameterCode);

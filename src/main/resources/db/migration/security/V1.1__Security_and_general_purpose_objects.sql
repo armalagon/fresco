@@ -120,8 +120,6 @@ create table parameter_constraint (
     id integer not null
     , min_amount bigint
     , max_amount bigint
-    , min_date date
-    , max_date date
     , min_total numeric(18, 2)
     , max_total numeric(18, 2)
     , constraint parameter_constraint_pk primary key (id)

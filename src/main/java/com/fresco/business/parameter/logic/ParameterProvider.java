@@ -66,8 +66,6 @@ public class ParameterProvider {
                 PARAMETER.CREATED_ON,
                 PARAMETER_CONSTRAINT.MIN_AMOUNT,
                 PARAMETER_CONSTRAINT.MAX_AMOUNT,
-                PARAMETER_CONSTRAINT.MIN_DATE,
-                PARAMETER_CONSTRAINT.MAX_DATE,
                 PARAMETER_CONSTRAINT.MIN_TOTAL,
                 PARAMETER_CONSTRAINT.MAX_TOTAL
             )
@@ -85,8 +83,6 @@ public class ParameterProvider {
                         .reserved(record.get(PARAMETER.IS_RESERVED))
                         .minAmount(record.get(PARAMETER_CONSTRAINT.MIN_AMOUNT))
                         .maxAmount(record.get(PARAMETER_CONSTRAINT.MAX_AMOUNT))
-                        .minDate(record.get(PARAMETER_CONSTRAINT.MIN_DATE))
-                        .maxDate(record.get(PARAMETER_CONSTRAINT.MAX_DATE))
                         .minTotal(record.get(PARAMETER_CONSTRAINT.MIN_TOTAL))
                         .maxTotal(record.get(PARAMETER_CONSTRAINT.MAX_TOTAL))
                         .addSources(sourcesByParameterId.getOrDefault(record.get(PARAMETER.ID), Collections.emptyList()))
@@ -120,6 +116,28 @@ public class ParameterProvider {
         }
 
         return Optional.ofNullable(DefaultDatatypeConverter.getInstance().getValue(parameter.getValue(), clazz));
+    }
+
+    public List<String> updateValue(ParameterType parameterType, String value) throws ParameterNotFound {
+        Objects.requireNonNull(parameterType, "parameterType");
+
+        Parameter parameter = parameters.get(parameterType.getCode());
+
+        if (parameter == null) {
+            throw new ParameterNotFound(parameterType.getCode());
+        }
+
+        List<String> errors = parameter.doValidateAndUpdate(value);
+
+        if (errors.isEmpty()) {
+            context
+                .update(PARAMETER)
+                .set(PARAMETER.VALUE, value)
+                .where(PARAMETER.CODE.equal(parameterType.getCode()))
+                .execute();
+        }
+
+        return errors;
     }
 
 }

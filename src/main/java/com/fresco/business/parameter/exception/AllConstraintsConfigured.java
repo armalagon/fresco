@@ -8,7 +8,7 @@ package com.fresco.business.parameter.exception;
  */
 public class AllConstraintsConfigured extends WrongParameterConfiguration {
 
-    protected static final String ERROR_FOR_ALL_CONSTRAINTS_ARE_CONFIGURED = "allConstraintsAreConfigured";
+    private static final String ERROR_FOR_ALL_CONSTRAINTS_ARE_CONFIGURED = "allConstraintsAreConfigured";
 
     public AllConstraintsConfigured(String parameterCode) {
         super(ERROR_FOR_ALL_CONSTRAINTS_ARE_CONFIGURED, parameterCode);

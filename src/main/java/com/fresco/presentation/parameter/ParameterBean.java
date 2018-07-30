@@ -32,11 +32,11 @@ public class ParameterBean implements Serializable {
 
     @Inject
     @Created
-    Event<ChangesMadeByEvent> creationEvent;
+    Event<ChangesMadeByEvent> createdProducer;
 
     @Inject
     @Updated
-    Event<ChangesMadeByEvent> modificationEvent;
+    Event<ChangesMadeByEvent> updatedProducer;
 
     @NotNull(message = "Please specify a search criteria")
     @Size(max = 100)
@@ -112,12 +112,16 @@ public class ParameterBean implements Serializable {
         mode = ScreenMode.EDIT;
 
         // -------------------------------------------------------------------------------------------------
-        // Fire events to get related data
-        creationEvent.fire(new ChangesMadeByEvent(selected.getCreatedBy(), selected.getCreatedOn()));
+        // Get related data
+        createdProducer.fire(new ChangesMadeByEvent(selected.getCreatedBy(), selected.getCreatedOn()));
 
         if (selected.getUpdatedBy() != null) {
-            modificationEvent.fire(new ChangesMadeByEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
+            updatedProducer.fire(new ChangesMadeByEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
         }
+    }
+
+    public void update() {
+
     }
 
     public void cancel() {

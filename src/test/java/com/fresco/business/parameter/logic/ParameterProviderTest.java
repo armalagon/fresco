@@ -4,6 +4,7 @@ import com.fresco.business.BaseConfigTest;
 import com.fresco.business.parameter.exception.ParameterNotFound;
 import com.fresco.business.parameter.model.ParameterType;
 import java.sql.SQLException;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,13 +34,17 @@ public class ParameterProviderTest extends BaseConfigTest {
                     System.out.println("-> " + p);
                 });
 
+        System.out.println(METHOD_SEPARATOR);
         Integer months = parameterProvider.getValue(ParameterType.PASSWORD_EXPIRATION, Integer.class).orElse(null);
         System.out.println("-> ParameterType.PASSWORD_EXPIRATION = " + months);
 
-        parameterProvider.findAll()
-                .forEach(p -> {
-                    System.out.println("---> Errores encontrados " + p.getCode() + ": " + p.validate());
-                });
+        System.out.println(METHOD_SEPARATOR);
+        String oldValue = parameterProvider.getValue(ParameterType.MINIMUM_PASSWORD_LENGTH, String.class).orElse(null);
+        List<String> errors = parameterProvider.updateValue(ParameterType.MINIMUM_PASSWORD_LENGTH, "6");
+        String newValue = parameterProvider.getValue(ParameterType.MINIMUM_PASSWORD_LENGTH, String.class).orElse(null);
+
+        System.out.println("-> " + ParameterType.MINIMUM_PASSWORD_LENGTH + ", oldValue: " + oldValue + "; newValue: " + newValue);
+        errors.forEach(msg -> System.out.println("-> Error: " + msg));
     }
 
 }
