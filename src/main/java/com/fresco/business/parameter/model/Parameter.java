@@ -7,7 +7,7 @@ import com.fresco.business.parameter.exception.AllConstraintsConfigured;
 import com.fresco.business.parameter.exception.NoConfigurationRequired;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.fresco.business.parameter.exception.WrongValue;
-import com.zacate.bean.BeanUtils;
+import com.zacate.bean.Reflections;
 import com.zacate.bean.ReflectionException;
 import com.zacate.conversion.DefaultDatatypeConverter;
 import com.zacate.i18n.Localized;
@@ -194,7 +194,7 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
                 return errors.getMessages();
             }
 
-            if (BeanUtils.isSomeIntegerType(valueBasedOnType)) {
+            if (Reflections.isSomeIntegerType(valueBasedOnType)) {
                 if (Arguments.isNotEmpty(minTotal, maxTotal)) {
                     errors.add(new WrongParameterConfiguration(getCode(), dataType, WrongParameterConfiguration.ConstraintType.TOTAL));
                 }
