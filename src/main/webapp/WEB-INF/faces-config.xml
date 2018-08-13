@@ -6,4 +6,11 @@
     <lifecycle>
         <phase-listener>com.fresco.business.config.RestoreViewListener</phase-listener>
     </lifecycle>
+
+    <application>
+        <resource-bundle>
+            <base-name>com.fresco.business.config.FrescoBundle</base-name>
+            <var>msgs</var>
+        </resource-bundle>
+    </application>
 </faces-config>

@@ -34,16 +34,16 @@
                 <p:dataTable var="parameter" value="#{parameterBean.results}" rowKey="#{parameter.id}"
                              paginator="true" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="10,20,30"
                              emptyMessage="#{parameterBean.emptyMessage}">
-                    <p:column headerText="Code" sortBy="#{parameter.code}">
+                    <p:column headerText="#{msgs.com_fresco_business_parameter_model_Parameter_code}" sortBy="#{parameter.code}">
                         <h:outputText value="#{parameter.code}" />
                     </p:column>
-                    <p:column headerText="Description" sortBy="#{parameter.getMessage()}">
+                    <p:column headerText="#{msgs.com_fresco_business_parameter_model_Parameter_message}" sortBy="#{parameter.getMessage()}">
                         <h:outputText value="#{parameter.getMessage()}" />
                     </p:column>
-                    <p:column headerText="Value">
+                    <p:column headerText="#{msgs.com_fresco_business_parameter_model_Parameter_value}">
                         <h:outputText value="#{parameter.value}" />
                     </p:column>
-                    <p:column headerText="Unit Of Measurement" sortBy="#{parameter.unitOfMeasurement.getMessage()}">
+                    <p:column headerText="#{msgs.com_fresco_business_parameter_model_Parameter_unitOfMeasurement}" sortBy="#{parameter.unitOfMeasurement.getMessage()}">
                         <h:outputText value="#{parameter.unitOfMeasurement.getMessage()}" />
                     </p:column>
                     <p:column style="width: 45px; text-align: center">
@@ -64,31 +64,31 @@
 
                 <p:panel header="#{parameterBean.selected.getMessage()}">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <p:outputLabel value="Code:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_parameter_model_Parameter_code}:" />
                         <h:outputText value="#{parameterBean.selected.code}" />
 
-                        <p:outputLabel value="Data Type:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_parameter_model_Parameter_dataType}:" />
                         <h:outputText value="#{parameterBean.selected.dataType}" />
 
-                        <p:outputLabel for="value" value="Value:" />
+                        <p:outputLabel for="value" value="#{msgs.com_fresco_business_parameter_model_Parameter_value}:" />
                         <p:inputTextarea id="value" value="#{parameterBean.selected.value}" maxlength="400" style="width: 100%" />
 
-                        <p:outputLabel value="Value Source:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_parameter_model_Parameter_valueSourceType}:" />
                         <h:outputText value="#{parameterBean.selected.valueSourceType.getMessage()}" />
 
-                        <p:outputLabel value="Unit Of Measurement:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_parameter_model_Parameter_unitOfMeasurement}:" />
                         <h:outputText value="#{parameterBean.selected.unitOfMeasurement.getMessage()}" />
 
-                        <p:outputLabel value="Created By:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_general_model_Auditable_createdBy}:" />
                         <h:outputText value="#{creation.user.code} - #{creation.user.fullname}" />
 
-                        <p:outputLabel value="Created On:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_general_model_Auditable_createdOn}:" />
                         <h:outputText value="#{creation.eventTime}" />
 
-                        <p:outputLabel value="Updated By:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_general_model_Auditable_updatedBy}:" />
                         <h:outputText value="#{modification.user.code} - #{modification.user.fullname}" />
 
-                        <p:outputLabel value="Updated On:" />
+                        <p:outputLabel value="#{msgs.com_fresco_business_general_model_Auditable_updatedOn}:" />
                         <h:outputText value="#{modification.eventTime}" />
 
                         <f:facet name="footer">
