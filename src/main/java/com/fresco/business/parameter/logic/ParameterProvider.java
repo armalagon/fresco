@@ -70,8 +70,8 @@ public class ParameterProvider {
                 PARAMETER_CONSTRAINT.MAX_TOTAL
             )
             .from(PARAMETER)
-            .leftJoin(PARAMETER_CONSTRAINT)
-            .on(PARAMETER.ID.eq(PARAMETER_CONSTRAINT.ID))
+                .leftJoin(PARAMETER_CONSTRAINT)
+                .on(PARAMETER.ID.eq(PARAMETER_CONSTRAINT.ID))
             .fetch(record -> {
                 return new Parameter.ParameterBuilder(record.get(PARAMETER.ID), record.get(PARAMETER.CODE),
                         record.get(PARAMETER.CREATED_BY), record.get(PARAMETER.CREATED_ON))
@@ -132,7 +132,7 @@ public class ParameterProvider {
         if (errors.isEmpty()) {
             context
                 .update(PARAMETER)
-                .set(PARAMETER.VALUE, value)
+                    .set(PARAMETER.VALUE, value)
                 .where(PARAMETER.CODE.equal(parameterType.getCode()))
                 .execute();
         }

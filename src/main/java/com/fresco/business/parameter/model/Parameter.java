@@ -7,8 +7,8 @@ import com.fresco.business.parameter.exception.AllConstraintsConfigured;
 import com.fresco.business.parameter.exception.NoConfigurationRequired;
 import com.fresco.business.parameter.exception.WrongParameterConfiguration;
 import com.fresco.business.parameter.exception.WrongValue;
-import com.zacate.bean.Reflections;
 import com.zacate.bean.ReflectionException;
+import com.zacate.bean.Reflections;
 import com.zacate.conversion.DefaultDatatypeConverter;
 import com.zacate.i18n.Localized;
 import com.zacate.identifier.ReadOnlyIntegerAndStringNaturalIdentifier;
@@ -18,10 +18,7 @@ import com.zacate.util.NumberUtils;
 import com.zacate.util.SimpleTextSearch;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -166,9 +163,12 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
                 .contains();
     }
 
-    public List<String> doValidateAndUpdate(String newValue) {
+    public List<String> validate() {
+        return validate(null);
+    }
+
+    private List<String> validate(String newValue) {
         if (Arguments.isEmpty(minAmount, maxAmount, minTotal, maxTotal)) {
-            value = newValue;
             return Collections.emptyList();
         }
 
@@ -188,7 +188,7 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
         if (value != null && ValueSourceType.SIMPLE_VALUE.equals(valueSourceType) && atLeastOneIsConfigured) {
             Object valueBasedOnType;
             try {
-                valueBasedOnType = convertValue(newValue);
+                valueBasedOnType = newValue == null ? convertValue(value) : convertValue(newValue);
             } catch (ClassNotFoundException | IllegalArgumentException | UnsupportedOperationException | ReflectionException ex) {
                 errors.add(ex);
                 return errors.getMessages();
@@ -222,11 +222,16 @@ public class Parameter extends ReadOnlyIntegerAndStringNaturalIdentifier impleme
             }
         }
 
+        return errors.getMessages();
+    }
+
+    public List<String> doValidateAndUpdate(String newValue) {
+        Objects.requireNonNull(newValue, "newValue");
+        List<String> errors = validate(newValue);
         if (errors.isEmpty()) {
             value = newValue;
         }
-
-        return errors.getMessages();
+        return errors;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.fresco.presentation.parameter;
 
+import com.fresco.business.parameter.exception.ParameterNotFound;
 import com.fresco.business.parameter.logic.ParameterProvider;
 import com.fresco.business.parameter.model.Parameter;
 import com.fresco.presentation.ScreenMode;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -32,19 +34,21 @@ public class ParameterBean implements Serializable {
 
     @Inject
     @Created
-    Event<ChangesMadeByEvent> createdProducer;
+    Event<ChangesMadeByEvent> createdEventProducer;
 
     @Inject
     @Updated
-    Event<ChangesMadeByEvent> updatedProducer;
+    Event<ChangesMadeByEvent> updatedEventProducer;
 
     @NotNull(message = "Please specify a search criteria")
     @Size(max = 100)
     private String criteria;
 
+    @Size(min = 1, max = 400)
+    private String value;
+
     private List<Parameter> results;
     private Parameter selected;
-
     private String emptyMessage;
     private ScreenMode mode;
 
@@ -61,6 +65,14 @@ public class ParameterBean implements Serializable {
 
     public void setCriteria(String criteria) {
         this.criteria = criteria;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public List<Parameter> getResults() {
@@ -113,15 +125,16 @@ public class ParameterBean implements Serializable {
 
         // -------------------------------------------------------------------------------------------------
         // Get related data
-        createdProducer.fire(new ChangesMadeByEvent(selected.getCreatedBy(), selected.getCreatedOn()));
+        createdEventProducer.fire(new ChangesMadeByEvent(selected.getCreatedBy(), selected.getCreatedOn()));
 
         if (selected.getUpdatedBy() != null) {
-            updatedProducer.fire(new ChangesMadeByEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
+            updatedEventProducer.fire(new ChangesMadeByEvent(selected.getUpdatedBy(), selected.getUpdatedOn()));
         }
     }
 
-    public void update() {
-
+    public void update() throws ParameterNotFound {
+        List<String> errors = provider.updateValue(selected.getParameterType(), value);
+        errors.forEach(Messages::addGlobalError);
     }
 
     public void cancel() {
