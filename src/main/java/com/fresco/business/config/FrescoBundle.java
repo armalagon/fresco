@@ -1,5 +1,6 @@
 package com.fresco.business.config;
 
+import com.zacate.bean.Reflections;
 import com.zacate.i18n.BundleAggregator;
 import com.zacate.i18n.LocalizedConstants;
 import java.util.Arrays;
@@ -17,7 +18,7 @@ public class FrescoBundle extends BundleAggregator {
                 .stream()
                 .map(Package::getName)
                 .filter(name -> name.startsWith("com.fresco.business"))
-                .map(name -> name.substring(0, name.lastIndexOf(LocalizedConstants.DOT)))
+                .map(Reflections::getParentPackageName)
                 .map(name -> new StringBuilder(name)
                         .append(LocalizedConstants.DOT)
                         .append(LocalizedConstants.I18N_PACKAGE_SUFFIX)
