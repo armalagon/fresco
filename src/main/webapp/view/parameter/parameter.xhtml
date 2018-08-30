@@ -5,7 +5,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Fresco - Parametro</title>
+        <title>Fresco - #{msgs.com_fresco_presentation_parameter_ParameterBean}</title>
         <style>
             .forty-percent {
                 width: 40%;
@@ -23,10 +23,10 @@
     <h:body>
         <h:panelGroup id="searchParameter" layout="block">
             <h:form rendered="#{parameterBean.onSearchingMode}">
-                <p:growl id="msgs" />
+                <p:messages id="msgs" closable="true" />
 
                 <div class="ui-inputgroup">
-                    <p:inputText id="criteria" value="#{parameterBean.criteria}" maxlength="100" placeholder="Search criteria" style="width: 100%" />
+                    <p:inputText id="criteria" value="#{parameterBean.criteria}" maxlength="100" placeholder="#{msgs.com_fresco_presentation_parameter_ParameterBean_criteria}" style="width: 100%" />
                     <p:commandButton action="#{parameterBean.search}" update="searchParameter" icon="fa fa-search" styleClass="white-button"/>
                 </div>
                 <br />
@@ -92,7 +92,7 @@
                         <h:outputText value="#{modification.eventTime}" />
 
                         <f:facet name="footer">
-                            <p:commandButton value="Save"  />
+                            <p:commandButton value="Save" />
                             <p:commandButton value="Cancel" immediate="true" action="#{parameterBean.cancel}" update="searchParameter crudParameter" />
                         </f:facet>
                     </h:panelGrid>
