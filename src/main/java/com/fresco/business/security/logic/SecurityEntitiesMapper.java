@@ -21,10 +21,22 @@ public abstract class SecurityEntitiesMapper {
     protected static final String FIELD_UPDATED_ON = "updated_on";
 
     public static void mapSecurityAttrInto(final Auditable auditable, final Record record) {
-        auditable.setCreatedBy(record.get(FIELD_CREATED_BY, Integer.class));
-        auditable.setCreatedOn(record.get(FIELD_CREATED_ON, LocalDateTime.class));
-        auditable.setUpdatedBy(record.get(FIELD_UPDATED_BY, Integer.class));
-        auditable.setUpdatedOn(record.get(FIELD_UPDATED_ON, LocalDateTime.class));
+        try {
+            auditable.setCreatedBy(record.get(FIELD_CREATED_BY, Integer.class));
+        } catch (IllegalArgumentException noField) {
+        }
+        try {
+            auditable.setCreatedOn(record.get(FIELD_CREATED_ON, LocalDateTime.class));
+        } catch (IllegalArgumentException noField) {
+        }
+        try {
+            auditable.setUpdatedBy(record.get(FIELD_UPDATED_BY, Integer.class));
+        } catch (IllegalArgumentException noField) {
+        }
+        try {
+            auditable.setUpdatedOn(record.get(FIELD_UPDATED_ON, LocalDateTime.class));
+        } catch (IllegalArgumentException noField) {
+        }
     }
 
     public static User mapUserFrom(final Record record) {
