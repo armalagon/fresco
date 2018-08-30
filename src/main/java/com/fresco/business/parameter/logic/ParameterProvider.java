@@ -101,7 +101,6 @@ public class ParameterProvider {
 
     public List<Parameter> findByText(String value) {
         return parameters.values().parallelStream()
-                .filter(p -> p.isReserved() == false)
                 .filter(p -> p.containsIgnoreCase(value))
                 .collect(Collectors.toList());
     }
